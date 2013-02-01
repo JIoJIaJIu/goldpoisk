@@ -1,0 +1,14 @@
+{% extends "index.tmpl" %}
+
+
+{% block body %}
+
+    <ul>
+    {% for product in products %}
+        <li>
+            {% include "blocks/products/product_item.tmpl" %}
+        </li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

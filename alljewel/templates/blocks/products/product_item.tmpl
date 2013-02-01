@@ -1,0 +1,15 @@
+<div>
+    <a href="{% url product_item product.id %}">{{ product }}</a>
+
+    {% for image in product.images.all %}
+        <img src="/{{ image.src }}" alt="{{ product.name }}" width="100"/>
+    {% endfor %}
+    <span>Мин. {{ product.min_cost }}</span>
+    <span>Макc. {{ product.max_cost }}</span>
+    {% if product.sale %} 
+        <span>Sale!</span>
+    {% endif %}
+    {% if product.is_new %}
+        <span>New!</span>
+    {% endif %}
+</div>
