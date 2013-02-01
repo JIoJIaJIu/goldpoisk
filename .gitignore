@@ -1,1 +1,8 @@
+wiki/*
+alljewel/settings.py
+media/*
+static/*
 
+*.swo
+*.swp
+*.pyc
