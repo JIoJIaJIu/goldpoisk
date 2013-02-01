@@ -12,7 +12,7 @@ class Product(models.Model):
 class Item(models.Model):
     cost = models.PositiveIntegerField()
     quantity = models.PositiveSmallIntegerField()
-    product = models.ForeignKey('Product')
+    product = models.ForeignKey('Product', related_name='items')
     is_new = models.BooleanField()
     sale = models.BooleanField()
 
