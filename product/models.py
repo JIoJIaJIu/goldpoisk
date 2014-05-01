@@ -7,7 +7,7 @@ class Product(models.Model):
     description = models.TextField(blank=True)
 
     materials = models.ManyToManyField('Material')
-    gems = models.ManyToManyField('Gems')
+    gems = models.ManyToManyField('Gem')
 
     def __unicode__(self):
         return '%s "%s"' % (self.type.name, self.name)
