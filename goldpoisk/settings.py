@@ -5,7 +5,7 @@ TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
-    ('Guro', 'zzaupp@gmail.com'),
+    ('Guro Bokum', 'guro@goldpoisk.ru'),
 )
 
 MANAGERS = ADMINS
@@ -13,25 +13,15 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'alljewel',                      # Or path to database file if using sqlite3.
-        'USER': 'alljewel',                      # Not used with sqlite3.
-        'PASSWORD': '12345',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'NAME': 'dev_goldpoisk',                      # Or path to database file if using sqlite3.
+        'USER': 'dev_goldpoisk',                      # Not used with sqlite3.
+        'PASSWORD': 'dev12345',                  # Not used with sqlite3.
+        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     },
 
 }
 
-"""
-'vk': {
-    'ENGINE': 'django.db.backends.mysql',
-    'NAME': 'alljewel',
-    'USER': 'alljewel',
-    'PASSWORD': '12345',
-    'HOST': '',
-    'PORT': ''
-}
-"""
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -109,10 +99,10 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'alljewel.urls'
+ROOT_URLCONF = 'goldpoisk.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'alljewel.wsgi.application'
+WSGI_APPLICATION = 'goldpoisk.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -133,10 +123,6 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'product',
 )
-
-DATABASE_ROUTERS = [
-    'alljewel.modules.router.VKRouter',
-]
 
 UPLOAD_TO = {
     'product': 'media/product',
