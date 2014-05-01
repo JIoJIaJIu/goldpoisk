@@ -34,7 +34,7 @@ class Material(models.Model):
         return self.name
 
 class Gem(models.Model):
-    name = models.CharField(max_length=128)
+    name = models.TextField(max_length=128)
 
     def __unicode__(self):
         return self.name
