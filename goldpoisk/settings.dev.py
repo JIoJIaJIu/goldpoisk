@@ -51,7 +51,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = 'media/'
+MEDIA_ROOT = '/home/guro/webapps/goldpoisk/myproject/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -62,7 +62,7 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = 'static/'
+STATIC_ROOT = '/home/guro/webapps/goldpoisk/myproject/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -84,7 +84,7 @@ STATICFILES_FINDERS = (
 )
 
 LOCALE_PATHS = (
-    'conf/locale/',
+    '/home/guro/webapps/goldpoisk/myproject/conf/locale/',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -116,7 +116,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    'goldpoisk/templates',
+    '/home/guro/webapps/goldpoisk/myproject/goldpoisk/templates',
 )
 
 INSTALLED_APPS = (

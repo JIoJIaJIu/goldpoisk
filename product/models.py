@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from goldpoisk.settings import MEDIA_ROOT, UPLOAD_TO
+from goldpoisk.settings import MEDIA_URL, UPLOAD_TO
 from shop.models import Shop
 
 from os import path
@@ -54,5 +54,8 @@ class Gem(models.Model):
         return self.name
 
 class Image(models.Model):
-    src = models.ImageField(upload_to=path.join(MEDIA_ROOT, UPLOAD_TO['product']))
+    src = models.ImageField(upload_to=UPLOAD_TO['product'])
     product = models.ForeignKey(Product)
+
+    def get_absolute_url(self):
+        return self.src.url

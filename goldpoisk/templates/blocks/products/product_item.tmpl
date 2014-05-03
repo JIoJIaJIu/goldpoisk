@@ -2,7 +2,7 @@
     <a href="{% url "product.views.product" product.id %}">{{ product }}</a>
 
     {% for image in product.image_set.all %}
-        <img src="/{{ image.src }}" alt="{{ product.name }}" width="100"/>
+        <img src="{{ image.get_absolute_url }}" alt="{{ product.name }}" width="100"/>
     {% endfor %}
 
     {% if product.min_cost == product.max_cost %}
