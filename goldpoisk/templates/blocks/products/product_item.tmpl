@@ -1,9 +1,14 @@
 <div>
-    <a href="{% url product_item product.id %}">{{ product }}</a>
+    <a href="{% url "product.views.product" product.id %}">{{ product }}</a>
 
-    {% for image in product.images.all %}
+    {% for image in product.image_set.all %}
         <img src="/{{ image.src }}" alt="{{ product.name }}" width="100"/>
     {% endfor %}
-    <span>Мин. {{ product.min_cost }}</span>
-    <span>Макc. {{ product.max_cost }}</span>
+
+    {% if product.min_cost == product.max_cost %}
+        <span>{{ product.min_cost }}</span>
+    {% else %}
+        <span>Мин. {{ product.min_cost }}</span>
+        <span>Макc. {{ product.max_cost }}</span>
+    {% endif %}
 </div>
