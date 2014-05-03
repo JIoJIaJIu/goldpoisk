@@ -21,5 +21,8 @@ def product(req, id):
     except Product.DoesNotExist:
         raise Http404
 
-    items = product.item_set;
-    return HttpResponse('Current product ' + id)
+    template = loader.get_template('pages/products/item.tmpl')
+    c = Context({
+        'product': product
+    })
+    return HttpResponse(template.render(c))

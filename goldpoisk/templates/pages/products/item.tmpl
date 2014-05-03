@@ -1,4 +1,18 @@
 {% extends "index.tmpl" %}
 
 {% block body%}
+<h1>{{product}}</h1>
+
+{% for image in product.image_set.all %}
+    <img src="{{ image.get_absolute_url }}" alt="{{ product.name }}" width="400"/>
+{% endfor %}
+
+{% for item in product.item_set.all %}
+<div>
+    <p>Магазин: {{item.shop}}</p>
+    <p>Цена: {{item.cost}}</p>
+    <p>Кол-во: {{item.quantity}}</p>
+</div>
+{% endfor %}
+
 {% endblock %}
