@@ -83,6 +83,10 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
+LOCALE_PATHS = (
+    'conf/locale/',
+)
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'xpit)%s352sj246b@s4c(c(d8z06dn+f6eapxbm51=cs%7a87n'
 
