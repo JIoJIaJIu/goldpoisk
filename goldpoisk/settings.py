@@ -136,8 +136,7 @@ INSTALLED_APPS = (
 )
 
 UPLOAD_TO = {
-    'product': 'media/product',
-    'gem': 'media/gem',
+    'product': 'media/product'
 }
 
 # A sample logging configuration. The only tangible logging
