@@ -5,15 +5,17 @@ class HideFromIndex(admin.ModelAdmin):
     def get_model_perms(self, *args, **kwargs):
         return {}
 
-class ProductInline(admin.StackedInline):
-    model = Product
+class ImageInline(admin.StackedInline):
+    model = Image
 
-class ItemAdmin(admin.ModelAdmin):
-    pass
+class ProductAdmin(admin.ModelAdmin):
+    inlines = [
+        ImageInline
+    ]
 
-admin.site.register(Item, ItemAdmin)
+admin.site.register(Item)
 
-admin.site.register(Product, HideFromIndex)
+admin.site.register(Product, ProductAdmin)
 admin.site.register(Type, HideFromIndex)
 admin.site.register(Gem, HideFromIndex)
 admin.site.register(Material, HideFromIndex)

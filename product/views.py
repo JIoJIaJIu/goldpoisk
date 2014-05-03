@@ -6,7 +6,7 @@ from product.models import Item, Product
 
 # list all products
 def list(req):
-    products = Product.objects.annotate(min_cost=Min('items__cost'), max_cost=Max('items__cost'))
+    products = Product.objects.annotate(min_cost=Min('item__cost'), max_cost=Max('item__cost'))
 
     template = loader.get_template('pages/products/list.tmpl')
     c = Context({
@@ -21,5 +21,5 @@ def product(req, id):
     except Product.DoesNotExist:
         raise Http404
 
-    items = product.items;
+    items = product.item_set;
     return HttpResponse('Current product ' + id)

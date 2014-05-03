@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from goldpoisk.settings import UPLOAD_TO
+from goldpoisk.settings import MEDIA_ROOT, UPLOAD_TO
 from shop.models import Shop
+
+from os import path
 
 class Product(models.Model):
     type = models.ForeignKey('Type', verbose_name=_('Type'))
@@ -26,8 +28,8 @@ class Item(models.Model):
     shop = models.ForeignKey(Shop, verbose_name=_('Shop'));
 
     class Meta:
-        verbose_name = _('Product')
-        verbose_name_plural = _('Products')
+        verbose_name = _('Store product')
+        verbose_name_plural = _('Store products')
 
     def __unicode__(self):
         return '%s: %d' % (self.product.__unicode__(), self.cost)
@@ -52,5 +54,5 @@ class Gem(models.Model):
         return self.name
 
 class Image(models.Model):
-    src = models.ImageField(upload_to=UPLOAD_TO['product'])
+    src = models.ImageField(upload_to=path.join(MEDIA_ROOT, UPLOAD_TO['product']))
     product = models.ForeignKey(Product)
