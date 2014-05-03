@@ -2,8 +2,6 @@ wiki/*
 media/*
 static/*
 
-*/migrations/*
-
 *.swo
 *.swp
 *.pyc
