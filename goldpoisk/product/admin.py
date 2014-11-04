@@ -1,5 +1,5 @@
 from django.contrib import admin
-from product.models import Product, Item, Type, Gem, Material, Image
+from goldpoisk.product.models import Product, Item, Type, Gem, Material, Image
 
 class HideFromIndex(admin.ModelAdmin):
     def get_model_perms(self, *args, **kwargs):

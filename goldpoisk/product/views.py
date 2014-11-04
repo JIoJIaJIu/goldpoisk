@@ -2,7 +2,7 @@
 from django.http import HttpResponse, Http404
 from django.template import Context, loader
 from django.db.models import Min, Max
-from product.models import Item, Product
+from goldpoisk.product.models import Item, Product
 
 # list all products
 def list(req):
