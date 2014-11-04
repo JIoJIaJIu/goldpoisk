@@ -117,6 +117,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     'goldpoisk/templates',
+    'product/manage/templates',
 )
 
 INSTALLED_APPS = (
@@ -129,8 +130,9 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'product',
-    'shop',
+    'goldpoisk.product',
+    'goldpoisk.shop',
+    'goldpoisk.shop.manage',
 
     'south',
 )

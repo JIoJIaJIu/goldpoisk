@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from goldpoisk.settings import MEDIA_URL, UPLOAD_TO
-from shop.models import Shop
+from goldpoisk.shop.models import Shop
 
 from os import path
 
