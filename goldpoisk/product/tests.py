@@ -1,5 +1,5 @@
 from django.test import TestCase
-from product.models import Product, Item, Material, Gem, Type
+from goldpoisk.product.models import Product, Item, Material, Gem, Type
 
 
 class MaterialTest(TestCase):
