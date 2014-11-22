@@ -19,9 +19,12 @@ urlpatterns = patterns('',
     url(r'^penal/', include(admin.site.urls)),
     url(r'^shops/', include('goldpoisk.shop.urls')),
     url(r'^manage/', include('goldpoisk.shop.manage.urls')),
+    url(r'^$', 'goldpoisk.views.main'),
     url(r'^', include('goldpoisk.product.urls')),
 )
 
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static('css', document_root=settings.STATIC_ROOT + 'css')
+    urlpatterns += static('images', document_root=settings.STATIC_ROOT + 'images')
