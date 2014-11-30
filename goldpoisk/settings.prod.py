@@ -84,7 +84,7 @@ STATICFILES_FINDERS = (
 )
 
 LOCALE_PATHS = (
-    '/home/guro/webapps/goldpoisk/myproject/conf/locale/'',
+    '/home/guro/webapps/goldpoisk/myproject/conf/locale/',
 )
 
 # Make this unique, and don't share it with anybody.
