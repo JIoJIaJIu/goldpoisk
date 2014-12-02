@@ -6,7 +6,10 @@ import copy
 
 from PyV8 import JSClass, JSArray
 from pybem import pybem
-from  goldpoisk import templates
+from goldpoisk import templates
+# TODO: move
+from goldpoisk.product.models import Product
+from django.db.models import Min, Max
 
 from random import shuffle
 
@@ -24,14 +27,21 @@ def main(req):
     ]
     shuffle(promo)
 
+    #TODO: move
+    products = Product.objects.annotate(min_cost=Min('item__cost'), max_cost=Max('item__cost'))
+    productsJSON = renderer.render('index', {
+        'list': JSArray(map(mapProduct, products))
+    }, req, 'blocks["g-goods"]', return_bemjson=True)
 
-    content = renderer.render('index', {
-        'promo': promo
+    contentJSON = renderer.render('index', {
+        'promo': promo,
+        'products': productsJSON,
     }, req, 'blocks["g-content.index"]', return_bemjson=True)
+
 
     html = renderer.render('index', {
         'menu': JSArray(templates.MENU),
-        'content': content
+        'content': contentJSON,
     }, req, 'blocks.page')
     res = HttpResponse(html);
     return res
@@ -48,3 +58,11 @@ def category(req, category):
 
     res = HttpResponse(html);
     return res
+
+#TODO: move to models
+def mapProduct(product):
+    return {
+        'title': product.name,
+        'price': product.min_cost,
+        'image': product.image_set.first().get_absolute_url(),
+    }
