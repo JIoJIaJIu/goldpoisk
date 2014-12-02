@@ -2,6 +2,7 @@
 from django.http import HttpResponse
 from django.conf import settings
 import os
+import copy
 
 from PyV8 import JSClass, JSArray
 from pybem import pybem
@@ -24,9 +25,26 @@ def main(req):
     shuffle(promo)
 
 
-    html = renderer.render('index', {
-        'menu': templates.MENU,
+    content = renderer.render('index', {
         'promo': promo
-    }, req, 'blocks.page');
+    }, req, 'blocks["g-content.index"]', return_bemjson=True)
+
+    html = renderer.render('index', {
+        'menu': JSArray(templates.MENU),
+        'content': content
+    }, req, 'blocks.page')
+    res = HttpResponse(html);
+    return res
+
+def category(req, category):
+    menu = copy.deepcopy(templates.MENU);
+    for item in menu:
+        if item['type'] == category:
+            item['isActive'] = True
+
+    html = renderer.render('index', {
+        'menu': JSArray(menu),
+    }, req, 'blocks.page')
+
     res = HttpResponse(html);
     return res
