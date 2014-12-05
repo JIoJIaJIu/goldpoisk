@@ -32,6 +32,7 @@ def main(req):
     productsJSON = renderer.render('index', {
         'list': JSArray(map(mapProduct, products))
     }, req, 'blocks["g-goods"]', return_bemjson=True)
+    print products
 
     contentJSON = renderer.render('index', {
         'promo': promo,
@@ -40,22 +41,9 @@ def main(req):
 
 
     html = renderer.render('index', {
-        'menu': JSArray(templates.MENU),
+        'menu': JSArray(templates.get_menu()),
         'content': contentJSON,
     }, req, 'blocks.page')
-    res = HttpResponse(html);
-    return res
-
-def category(req, category):
-    menu = copy.deepcopy(templates.MENU);
-    for item in menu:
-        if item['type'] == category:
-            item['isActive'] = True
-
-    html = renderer.render('index', {
-        'menu': JSArray(menu),
-    }, req, 'blocks.page')
-
     res = HttpResponse(html);
     return res
 
@@ -65,4 +53,5 @@ def mapProduct(product):
         'title': product.name,
         'price': product.min_cost,
         'image': product.image_set.first().get_absolute_url(),
+        'href': product.get_absolute_url()
     }

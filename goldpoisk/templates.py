@@ -1,26 +1,25 @@
 #-*- coding: utf8 -*-
-import copy
-
 from goldpoisk.product.models import Type
 
-def mapMenu(item):
-    return {
-        'url': item.url,
-        'type': item.type,
-        'title': item.name
-    }
-
-MENU = map(mapMenu, Type.objects.all())
+def get_menu():
+    return map(mapMenu, Type.objects.all())
 
 def get_with_active_menu(category): 
-    menu = copy.deepcopy(MENU);
+    menu = get_menu();
     for item in menu:
-        if item.get('url') == category:
+        if item.get('href') == category:
             item['isActive'] = True
     return menu
 
 def get_menu_regexp():
-    category = [x.get('url') for x in MENU]
+    category = [x.get('href') for x in get_menu()]
     category_re = '^(?P<category>' + '|'.join(category) + ')$'
     return category_re
+
+def mapMenu(item):
+    return {
+        'href': item.url,
+        'type': item.type,
+        'label': item.name
+    }
 
