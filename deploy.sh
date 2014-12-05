@@ -1,5 +1,5 @@
 #!/bin/bash
-export PYTHONPATH=/home/guro/goldpoisk/myproject:/home/guro/goldpoisk/lib/python2.7:$PYTHONPATH
+export PYTHONPATH=/home/guro/goldpoisk/myproject:/home/guro/goldpoisk/lib/python2.7:/home/guro/lib/python2.7/:$PYTHONPATH
 cd goldpoisk
 echo "We are here" `pwd`
 
