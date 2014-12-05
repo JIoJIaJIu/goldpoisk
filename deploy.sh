@@ -15,8 +15,8 @@ mv myproject/goldpoisk/settings.prod.py myproject/goldpoisk/settings.py
 echo 'Migrations..'
 echo 'Migration product..'
 cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/product/migrations myproject/goldpoisk/product/
-python manage.py makemigrations product -v 2
-python manage.py migrate product -v 2
+python myproject/manage.py makemigrations product -v 2
+python myproject/manage.py migrate product -v 2
 
 rm backend.zip
 echo 'Restart uwsgi && nginx..'
