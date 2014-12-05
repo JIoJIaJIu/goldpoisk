@@ -4,7 +4,7 @@ cd goldpoisk
 echo "We are here" `pwd`
 
 mkdir -p arhives;
-mv myproject arhives/myproject.${BUILD_NUMBER};
+mv myproject arhives/myproject.${BUILD_NUMBER}
 
 echo 'Stopping u[w]sgi..';
 pr=$(ps -ef | grep [w]sgi | awk '{print $2}')
