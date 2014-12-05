@@ -11,8 +11,10 @@ class Product(models.Model):
     name = models.CharField(_('Name'), max_length=128)
     description = models.TextField(_('Description'), blank=True)
 
+    number = models.CharField(max_length=32)
     materials = models.ManyToManyField('Material', verbose_name=_('Materials'))
     gems = models.ManyToManyField('Gem', verbose_name=_('Gems'))
+    weight = models.PositiveIntegerField(blank=True)
 
     class Meta:
         verbose_name = _('Product')
@@ -20,6 +22,9 @@ class Product(models.Model):
 
     def __unicode__(self):
         return '%s "%s"' % (self.type.name, self.name)
+
+    def get_absolute_url(self):
+        return '/'
 
 class Item(models.Model):
     cost = models.PositiveIntegerField(_('Cost'))
@@ -35,8 +40,22 @@ class Item(models.Model):
         return '%s: %d' % (self.product.__unicode__(), self.cost)
 
 
+TYPE_CHOICES = (
+    ('necklaces', 'necklaces'),
+    ('chains', 'chains'),
+    ('pendants','pendants'),
+    ('bracelets','bracelets'),
+    ('rings', 'rings'),
+    ('earrings', 'earrings'),
+    ('brooches', 'brooches'),
+    ('watches', 'watches'),
+    ('cutlery', 'cutlery'),
+)
+
 class Type(models.Model):
     name = models.CharField(max_length=128)
+    url = models.SlugField(max_length=32)
+    type = models.CharField(max_length=32, unique=True, choices=TYPE_CHOICES)
 
     def __unicode__(self):
         return self.name
@@ -49,6 +68,7 @@ class Material(models.Model):
 
 class Gem(models.Model):
     name = models.CharField(max_length=128)
+    carat = models.PositiveIntegerField(blank=True)
 
     def __unicode__(self):
         return self.name
