@@ -22,8 +22,8 @@ sleep 1
 echo 'Migrations..'
 echo 'Migration product..'
 cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/product/migrations myproject/goldpoisk/product/
-python myproject/manage.py makemigrations product -v 2
-python myproject/manage.py migrate product -v 2
+python2.7 myproject/manage.py makemigrations product -v 2
+python2.7 myproject/manage.py migrate product -v 2
 sleep 1
 
 rm backend.zip
