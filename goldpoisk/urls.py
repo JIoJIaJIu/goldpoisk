@@ -7,11 +7,6 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-from templates import MENU
-
-category = [x['type'] for x in MENU]
-categoryRe = '^(?P<category>' + '|'.join(category) + ')$'
-
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'alljewel.views.home', name='home'),
@@ -22,11 +17,10 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^penal/', include(admin.site.urls)),
-    url(r'^shops/', include('goldpoisk.shop.urls')),
-    url(r'^manage/', include('goldpoisk.shop.manage.urls')),
-    url(r'^$', 'goldpoisk.views.main'),
-    url(categoryRe, 'goldpoisk.views.category'),
+    #url(r'^shops/', include('goldpoisk.shop.urls')),
+    #url(r'^manage/', include('goldpoisk.shop.manage.urls')),
     url(r'^', include('goldpoisk.product.urls')),
+    url(r'^$', 'goldpoisk.views.main'),
 )
 
 if settings.DEBUG:
