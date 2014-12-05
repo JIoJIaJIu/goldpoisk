@@ -116,7 +116,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    'frontend',
+    '/home/jiojiajiu/workspace/goldpoisk/server/frontend',
     'goldpoisk/product/manage/templates',
 )
 
@@ -133,8 +133,6 @@ INSTALLED_APPS = (
     'goldpoisk.product',
     'goldpoisk.shop',
     'goldpoisk.shop.manage',
-
-    'south',
 )
 
 UPLOAD_TO = {

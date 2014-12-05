@@ -132,9 +132,6 @@ INSTALLED_APPS = (
     'goldpoisk.product',
     'goldpoisk.shop',
     'goldpoisk.shop.manage',
-
-    'pybem',
-    'south',
 )
 
 UPLOAD_TO = {
