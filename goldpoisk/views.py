@@ -1,17 +1,15 @@
 #-*- coding: utf8 -*-
-from django.http import HttpResponse
-from django.conf import settings
 import os
 import copy
-
+from random import shuffle
 from PyV8 import JSClass, JSArray
 from pybem import pybem
-from goldpoisk import templates
-# TODO: move
-from goldpoisk.product.models import Product
-from django.db.models import Min, Max
 
-from random import shuffle
+from django.http import HttpResponse
+from django.conf import settings
+
+from goldpoisk.templates import get_menu
+from goldpoisk.product.models import get_products_for_main
 
 class JS(JSClass):
     def log(self, *args):
@@ -27,31 +25,13 @@ def main(req):
     ]
     shuffle(promo)
 
-    #TODO: move
-    products = Product.objects.annotate(min_cost=Min('item__cost'), max_cost=Max('item__cost'))
-    productsJSON = renderer.render('index', {
-        'list': JSArray(map(mapProduct, products))
-    }, req, 'blocks["g-goods"]', return_bemjson=True)
-    print products
-
-    contentJSON = renderer.render('index', {
+    context = {
+        'menu': JSArray(get_menu()),
         'promo': promo,
-        'products': productsJSON,
-    }, req, 'blocks["g-content.index"]', return_bemjson=True)
+        'products': JSArray(get_products_for_main()),
+    }
 
-
-    html = renderer.render('index', {
-        'menu': JSArray(templates.get_menu()),
-        'content': contentJSON,
-    }, req, 'blocks.page')
+    html = renderer.render('index', context, req, 'pages.index')
     res = HttpResponse(html);
     return res
 
-#TODO: move to models
-def mapProduct(product):
-    return {
-        'title': product.name,
-        'price': product.min_cost,
-        'image': product.image_set.first().get_absolute_url(),
-        'href': product.get_absolute_url()
-    }

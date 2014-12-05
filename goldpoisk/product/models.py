@@ -1,10 +1,11 @@
+from os import path
+
 from django.db import models
+from django.db.models import Min, Max
 from django.utils.translation import ugettext_lazy as _
 
 from goldpoisk.settings import MEDIA_URL, UPLOAD_TO
 from goldpoisk.shop.models import Shop
-
-from os import path
 
 class Product(models.Model):
     type = models.ForeignKey('Type', verbose_name=_('Type'))
@@ -13,8 +14,8 @@ class Product(models.Model):
 
     number = models.CharField(max_length=32)
     materials = models.ManyToManyField('Material', verbose_name=_('Materials'))
-    gems = models.ManyToManyField('Gem', verbose_name=_('Gems'))
-    weight = models.PositiveIntegerField(blank=True)
+    gems = models.ManyToManyField('Gem', verbose_name=_('Gems'), blank=True)
+    weight = models.PositiveIntegerField()
 
     class Meta:
         verbose_name = _('Product')
@@ -79,3 +80,22 @@ class Image(models.Model):
 
     def get_absolute_url(self):
         return self.src.url
+
+def get_products_for_category(category):
+    products = Product.objects.filter(type__url__exact=category)
+    products = products.annotate(min_cost=Min('item__cost'), max_cost=Max('item__cost'))
+
+    return map(mapProduct, products)
+
+def get_products_for_main():
+    products = Product.objects.annotate(min_cost=Min('item__cost'), max_cost=Max('item__cost'))
+    return map(mapProduct, products)
+
+def mapProduct(product):
+    image = product.image_set.first()
+    return {
+        'title': product.name,
+        'price': product.min_cost,
+        'image': image and image.get_absolute_url(),
+        'href': product.get_absolute_url(),
+    }
