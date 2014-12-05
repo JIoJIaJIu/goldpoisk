@@ -1,5 +1,5 @@
 #!/bin/bash
-source ~/.bashrc
+export PYTHONPATH=/home/guro/goldpoisk/myproject:/home/guro/goldpoisk/lib/python2.7:$PYTHONPATH
 cd goldpoisk
 echo "We are here" `pwd`
 
@@ -28,5 +28,5 @@ sleep 1
 
 rm backend.zip
 echo 'Restart uwsgi && nginx..'
-~/bin/uwsgi --master ~/goldpoisk/myproject/production.ini
+~/bin/uwsgi --master ~/goldpoisk/myproject/production.ini &
 ./nginx/sbin/nginx -s reload
