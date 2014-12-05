@@ -1,5 +1,7 @@
 #!/bin/bash
-cd goldpoisk;
+source ~/.bashrc
+cd goldpoisk
+echo "We are here" `pwd`
 
 mkdir -p arhives;
 mv myproject arhives/myproject.${BUILD_NUMBER};
@@ -26,5 +28,5 @@ sleep 1
 
 rm backend.zip
 echo 'Restart uwsgi && nginx..'
-uwsgi --master ~/golpoisk/myproject/production.ini
+~/bin/uwsgi --master ~/golpoisk/myproject/production.ini
 ./nginx/sbin/nginx -s reload
