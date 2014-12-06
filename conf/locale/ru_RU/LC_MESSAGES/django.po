@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-03 14:24+0400\n"
+"POT-Creation-Date: 2014-12-06 14:22+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,74 +17,80 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: product/models.py:8 product/models.py:25
+#: goldpoisk/product/models.py:12 goldpoisk/product/models.py:43
 msgid "Type"
 msgstr "Тип"
 
-#: product/models.py:9 shop/models.py:6
+#: goldpoisk/product/models.py:13 goldpoisk/shop/models.py:6
 msgid "Name"
 msgstr "Имя"
 
-#: product/models.py:10 shop/models.py:7
+#: goldpoisk/product/models.py:14 goldpoisk/shop/models.py:7
 msgid "Description"
 msgstr "Описание"
 
-#: product/models.py:12
+#: goldpoisk/product/models.py:17
 msgid "Materials"
 msgstr "Материалы"
 
-#: product/models.py:13
+#: goldpoisk/product/models.py:18
 msgid "Gems"
 msgstr "Камни"
 
-#: product/models.py:16
+#: goldpoisk/product/models.py:22
 msgid "Product"
 msgstr "Товар"
 
-#: product/models.py:17
+#: goldpoisk/product/models.py:23
 msgid "Products"
 msgstr "Товары"
 
-#: product/models.py:23
+#: goldpoisk/product/models.py:41
 msgid "Cost"
 msgstr "Цена"
 
-#: product/models.py:24
+#: goldpoisk/product/models.py:42
 msgid "Quantity"
 msgstr "Количество"
 
-#: product/models.py:26 shop/models.py:12
+#: goldpoisk/product/models.py:44 goldpoisk/shop/models.py:12
 msgid "Shop"
 msgstr "Магазин"
 
-#: product/models.py:29
+#: goldpoisk/product/models.py:45
+msgid "Buy url"
+msgstr "Url купить"
+
+#: goldpoisk/product/models.py:48
 msgid "Store product"
 msgstr "Товар в магазине"
 
-#: product/models.py:30
+#: goldpoisk/product/models.py:49
 msgid "Store products"
 msgstr "Товары в магазине"
 
-#: shop/models.py:9 shop/models.py:25
-msgid "Admin"
-msgstr "Администратор"
-
-#: shop/models.py:13
-msgid "Shops"
-msgstr "Магазины"
-
-#: shop/models.py:19 shop/models.py:29
+#: goldpoisk/shop/manage/model.py:4 goldpoisk/shop/manage/model.py:15
+#: goldpoisk/shop/models.py:19 goldpoisk/shop/models.py:29
 msgid "Email"
 msgstr "Почта"
 
-#: shop/models.py:26
+#: goldpoisk/shop/manage/model.py:10 goldpoisk/shop/models.py:9
+#: goldpoisk/shop/models.py:25
+msgid "Admin"
+msgstr "Администратор"
+
+#: goldpoisk/shop/manage/model.py:11 goldpoisk/shop/models.py:26
 msgid "Admins"
 msgstr "Администраторы"
 
-#: shop/models.py:36
+#: goldpoisk/shop/manage/model.py:22 goldpoisk/shop/models.py:36
 msgid "Manager"
 msgstr "Менеджер"
 
-#: shop/models.py:37
+#: goldpoisk/shop/manage/model.py:23 goldpoisk/shop/models.py:37
 msgid "Managers"
 msgstr "Менеджеры"
+
+#: goldpoisk/shop/models.py:13
+msgid "Shops"
+msgstr "Магазины"
