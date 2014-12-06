@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 from os import path
 
 from django.db import models
@@ -24,8 +25,17 @@ class Product(models.Model):
     def __unicode__(self):
         return '%s "%s"' % (self.type.name, self.name)
 
+    def get_weight(self):
+        return '%d грамм' % self.weight
+
+    def get_carat(self):
+        carat = self.gems.all().aggregate(Max('carat'))['carat__max']
+        if carat:
+            carat = '%d карат' % carat
+        return carat
+
     def get_absolute_url(self):
-        return '/'
+        return '/id%d' % self.pk
 
 class Item(models.Model):
     cost = models.PositiveIntegerField(_('Cost'))
@@ -88,14 +98,28 @@ def get_products_for_category(category):
     return map(mapProduct, products)
 
 def get_products_for_main():
-    products = Product.objects.annotate(min_cost=Min('item__cost'), max_cost=Max('item__cost'))
-    return map(mapProduct, products)
+    items = Item.objects.filter(quantity__gte=0)[:5]
+    return map(mapItem, items)
 
 def mapProduct(product):
     image = product.image_set.first()
+    price = 0
+    if hasattr(product, 'min_cost'):
+        price = product.min_cost
     return {
         'title': product.name,
-        'price': product.min_cost,
+        'price': price,
         'image': image and image.get_absolute_url(),
         'href': product.get_absolute_url(),
+        'pw': product.get_weight(),
+        'jw': product.get_carat(),
     }
+
+def mapItem(item):
+    product = mapProduct(item.product)
+
+    product.update({
+        'shop': item.shop.name,
+        'price': item.cost,
+    })
+    return product

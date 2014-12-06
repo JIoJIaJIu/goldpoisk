@@ -8,7 +8,7 @@ from django.db.models import Min, Max
 
 from goldpoisk import settings
 from goldpoisk.product.models import Item, Product, get_products_for_category
-from goldpoisk.templates import get_with_active_menu
+from goldpoisk.templates import get_menu, get_with_active_menu
 
 renderer = pybem.BEMRender(os.path.abspath(settings.TEMPLATE_DIRS[0]))
 
@@ -29,8 +29,13 @@ def product(req, id):
     except Product.DoesNotExist:
         raise Http404
 
-    template = loader.get_template('pages/products/item.tmpl')
-    c = Context({
-        'product': product
-    })
-    return HttpResponse(template.render(c))
+    context = {
+        'menu': JSArray(get_menu()),
+        'products': JSArray([]),
+        'gallery': {
+            'images': JSArray(map(lambda i: i.get_absolute_url(), product.image_set.all()))
+        }
+    }
+
+    html = renderer.render('index', context, req, 'pages.item')
+    return HttpResponse(html)
