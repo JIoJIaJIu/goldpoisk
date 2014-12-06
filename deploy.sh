@@ -20,10 +20,10 @@ mv myproject/goldpoisk/settings.prod.py myproject/goldpoisk/settings.py
 sleep 1
 
 echo 'Migrations..'
-echo 'Migration product..'
+echo 'Copy migration product..'
 cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/product/migrations myproject/goldpoisk/product/
-~/bin/python myproject/manage.py makemigrations product -v 2
-~/bin/python myproject/manage.py migrate product -v 2
+echo 'Copy migration shop'
+cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/shop/migrations myproject/goldpoisk/shop/
 sleep 1
 
 rm backend.zip
