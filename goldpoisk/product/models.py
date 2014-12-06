@@ -34,6 +34,19 @@ class Product(models.Model):
             carat = '%d карат' % carat
         return carat
 
+    def get_features(self):
+        features = []
+        features.append({'Артикул': self.number})
+        features.append({'Металл': self.materials.all()[0].name})
+
+        gems = self.gems.all()
+        if len(gems):
+            gem = gems[0]
+            features.append({'Камень': gem.name})
+            features.append({'Карат': gem.carat})
+
+        return features
+
     def get_absolute_url(self):
         return '/id%d' % self.pk
 
@@ -42,7 +55,7 @@ class Item(models.Model):
     quantity = models.PositiveSmallIntegerField(_('Quantity'))
     product = models.ForeignKey('Product', verbose_name=_('Type'))
     shop = models.ForeignKey(Shop, verbose_name=_('Shop'));
-    buy_url = models.URLField(max_length=64, verbose_name=_('Buy url'))
+    buy_url = models.URLField(max_length=256, verbose_name=_('Buy url'))
 
     class Meta:
         verbose_name = _('Store product')

@@ -29,12 +29,18 @@ def product(req, id):
     except Product.DoesNotExist:
         raise Http404
 
+    category = product.type
     context = {
-        'menu': JSArray(get_menu()),
-        'products': JSArray([]),
-        'gallery': {
-            'images': JSArray(map(lambda i: i.get_absolute_url(), product.image_set.all()))
-        }
+        'menu': JSArray(get_with_active_menu(category.url)),
+        'item': {
+            'title': product.name,
+            'category': product.type.name,
+            'gallery': {
+                'images': JSArray(map(lambda i: i.get_absolute_url(), product.image_set.all()))
+            },
+            'features': JSArray(product.get_features()),
+            'description': product.description,
+        },
     }
 
     html = renderer.render('index', context, req, 'pages.item')
