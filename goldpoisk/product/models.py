@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 from os import path
 
 from django.db import models
@@ -42,6 +42,7 @@ class Item(models.Model):
     quantity = models.PositiveSmallIntegerField(_('Quantity'))
     product = models.ForeignKey('Product', verbose_name=_('Type'))
     shop = models.ForeignKey(Shop, verbose_name=_('Shop'));
+    buy_url = models.URLField(max_length=64, verbose_name=_('Buy url'))
 
     class Meta:
         verbose_name = _('Store product')
