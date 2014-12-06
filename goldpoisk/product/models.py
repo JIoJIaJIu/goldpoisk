@@ -16,7 +16,7 @@ class Product(models.Model):
     number = models.CharField(max_length=32)
     materials = models.ManyToManyField('Material', verbose_name=_('Materials'))
     gems = models.ManyToManyField('Gem', verbose_name=_('Gems'), blank=True)
-    weight = models.PositiveIntegerField()
+    weight = models.DecimalField(decimal_places=5, max_digits=8)
 
     class Meta:
         verbose_name = _('Product')
