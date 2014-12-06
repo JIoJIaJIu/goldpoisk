@@ -122,5 +122,6 @@ def mapItem(item):
     product.update({
         'shop': item.shop.name,
         'price': item.cost,
+        'buyUrl': item.buy_url
     })
     return product
