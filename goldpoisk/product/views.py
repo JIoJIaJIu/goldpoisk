@@ -30,13 +30,15 @@ def product(req, id):
         raise Http404
 
     category = product.type
+    images = product.image_set.all()
     context = {
         'menu': JSArray(get_with_active_menu(category.url)),
         'item': {
             'title': product.name,
             'category': product.type.name,
             'gallery': {
-                'images': JSArray(map(lambda i: i.get_absolute_url(), product.image_set.all()))
+                'images': JSArray(map(lambda i: i.get_absolute_url(), images)),
+                'mainImg': images[0].get_absolute_url(),
             },
             'features': JSArray(product.get_features()),
             'description': product.description,
