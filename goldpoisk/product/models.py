@@ -62,7 +62,7 @@ class Item(models.Model):
         verbose_name_plural = _('Store products')
 
     def __unicode__(self):
-        return '%s: %d руб' % (self.product.__unicode__(), self.cost)
+        return '%s: %d rub' % (self.product.__unicode__(), self.cost)
 
 
 TYPE_CHOICES = (
