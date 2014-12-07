@@ -5,6 +5,7 @@ from django.contrib.auth.models import User, AbstractUser, AbstractBaseUser
 class Shop(models.Model):
     name = models.CharField(_('Name'), max_length=128)
     description = models.TextField(_('Description'), blank=True)
+    url = models.URLField(_('Url'), blank=True, max_length=256)
 
     admin = models.ForeignKey('Admin', verbose_name=_('Admin'))
 
