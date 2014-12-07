@@ -1,7 +1,7 @@
 # Django settings for alljewel project.
 import sys
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
