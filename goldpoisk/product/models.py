@@ -33,7 +33,7 @@ class Product(models.Model):
     def get_carat(self):
         carat = self.gems.all().aggregate(Max('carat'))['carat__max']
         if carat:
-            carat = '%g карат' % carat
+            return '%g карат' % carat
         return None
 
     def get_features(self):
