@@ -20,6 +20,8 @@ mv myproject/goldpoisk/settings.prod.py myproject/goldpoisk/settings.py
 sleep 1
 
 echo 'Migrations..'
+echo 'Copy migration goldpoisk'
+cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/migrations myproject/goldpoisk/
 echo 'Copy migration product..'
 cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/product/migrations myproject/goldpoisk/product/
 echo 'Copy migration shop'
