@@ -26,12 +26,12 @@ class Product(models.Model):
         return '%s %s' % (self.name, self.number)
 
     def get_weight(self):
-        return '%d грамм' % self.weight
+        return '%f грамм' % self.weight
 
     def get_carat(self):
         carat = self.gems.all().aggregate(Max('carat'))['carat__max']
         if carat:
-            carat = '%d карат' % carat
+            carat = '%f карат' % carat
         return carat
 
     def get_features(self):
