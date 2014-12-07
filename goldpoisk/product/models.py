@@ -97,7 +97,7 @@ class Gem(models.Model):
 
     def __unicode__(self):
         if self.carat:
-            return '%s %d' % (self.name, self.carat)
+            return '%s %.3f' % (self.name, self.carat)
         return self.name
 
 class Image(models.Model):
