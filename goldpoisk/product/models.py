@@ -4,6 +4,7 @@ from os import path
 from django.db import models
 from django.db.models import Min, Max
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ObjectDoesNotExist
 
 from goldpoisk.settings import MEDIA_URL, UPLOAD_TO
 from goldpoisk.shop.models import Shop
@@ -140,4 +141,21 @@ def mapItem(item):
         'price': item.cost,
         'buyUrl': item.buy_url
     })
+
+    try:
+        item.action is not None
+        product.update({
+            'action': True
+        })
+    except ObjectDoesNotExist:
+        pass
+
+    try:
+        item.hit is not None
+        product.update({
+            'hit': True
+        })
+    except ObjectDoesNotExist:
+        pass
+
     return product
