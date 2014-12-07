@@ -134,17 +134,18 @@ def mapProduct(product):
     return {
         'title': product.name,
         'price': price,
-        'image': image and image.get_absolute_url(),
-        'href': product.get_absolute_url(),
-        'pw': product.get_weight(),
-        'jw': product.get_carat(),
+        'imageUrl': image and image.get_absolute_url(),
+        'url': product.get_absolute_url(),
+        'weight': product.get_weight(),
+        'carat': product.get_carat(),
     }
 
 def mapItem(item):
     product = mapProduct(item.product)
 
     product.update({
-        'shop': item.shop.name,
+        'store': item.shop.name,
+        'storeUrl': item.shop.url,
         'price': item.cost,
         'buyUrl': item.buy_url
     })
