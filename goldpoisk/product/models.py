@@ -45,7 +45,8 @@ class Product(models.Model):
         if len(gems):
             gem = gems[0]
             features.append({'Камень': gem.name})
-            features.append({'Карат': gem.carat})
+            if gem.carat:
+                features.append({'Карат': gem.carat})
 
         return features
 
@@ -111,9 +112,15 @@ class Image(models.Model):
 
 def get_products_for_category(category):
     products = Product.objects.filter(type__url__exact=category)
-    products = products.annotate(min_cost=Min('item__cost'), max_cost=Max('item__cost'))
+    def eachProduct(product):
+        items = product.item_set.all()
+        if len(items) == 1:
+            return mapItem(items[0])
 
-    return map(mapProduct, products)
+        return mapProduct(product)
+    #products = products.annotate(min_cost=Min('item__cost'), max_cost=Max('item__cost'))
+
+    return map(eachProduct, products)
 
 def get_products_for_main():
     bids = BestBid.objects.all().prefetch_related('item')
