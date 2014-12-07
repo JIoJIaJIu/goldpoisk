@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from goldpoisk.settings import MEDIA_URL, UPLOAD_TO
 from goldpoisk.shop.models import Shop
+from goldpoisk.models import BestBid
 
 class Product(models.Model):
     type = models.ForeignKey('Type', verbose_name=_('Type'))
@@ -114,8 +115,8 @@ def get_products_for_category(category):
     return map(mapProduct, products)
 
 def get_products_for_main():
-    items = Item.objects.filter(quantity__gte=0)[:5]
-    return map(mapItem, items)
+    bids = BestBid.objects.all().prefetch_related('item')
+    return map(mapItem, [bid.item for bid in bids])
 
 def mapProduct(product):
     image = product.image_set.first()

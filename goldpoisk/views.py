@@ -35,3 +35,12 @@ def main(req):
     res = HttpResponse(html);
     return res
 
+def best(req):
+    context = {
+        'menu': JSArray(get_menu()),
+        'products': JSArray(get_products_for_main()),
+    }
+
+    html = renderer.render('index', context, req, 'pages.category')
+    res = HttpResponse(html);
+    return res

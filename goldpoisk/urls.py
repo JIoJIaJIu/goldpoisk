@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^penal/', include(admin.site.urls)),
     #url(r'^shops/', include('goldpoisk.shop.urls')),
     #url(r'^manage/', include('goldpoisk.shop.manage.urls')),
+    url(r'^best$', 'goldpoisk.views.best'),
     url(r'^', include('goldpoisk.product.urls')),
     url(r'^$', 'goldpoisk.views.main'),
 )
