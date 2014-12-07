@@ -23,7 +23,7 @@ class Product(models.Model):
         verbose_name_plural = _('Products')
 
     def __unicode__(self):
-        return '%s "%s"' % (self.type.name, self.name)
+        return '%s %s' % (self.name, self.number)
 
     def get_weight(self):
         return '%d грамм' % self.weight
@@ -62,7 +62,7 @@ class Item(models.Model):
         verbose_name_plural = _('Store products')
 
     def __unicode__(self):
-        return '%s: %d' % (self.product.__unicode__(), self.cost)
+        return '%s: %d руб' % (self.product.__unicode__(), self.cost)
 
 
 TYPE_CHOICES = (
@@ -93,9 +93,11 @@ class Material(models.Model):
 
 class Gem(models.Model):
     name = models.CharField(max_length=128)
-    carat = models.PositiveIntegerField(blank=True)
+    carat = models.DecimalField(decimal_places=5, max_digits=8, blank=True)
 
     def __unicode__(self):
+        if self.carat:
+            return '%s %d' % (self.name, self.carat)
         return self.name
 
 class Image(models.Model):
