@@ -7,14 +7,20 @@ from django.http import HttpResponse, Http404
 from django.db.models import Min, Max
 
 from goldpoisk import settings
-from goldpoisk.product.models import Item, Product, get_products_for_category
+from goldpoisk.product.models import Item, Type, Product, get_products_for_category
 from goldpoisk.templates import get_menu, get_with_active_menu
 
 renderer = pybem.BEMRender(os.path.abspath(settings.TEMPLATE_DIRS[0]))
 
 def category(req, category):
+    #TODO:
+    type = Type.objects.get(url=category)
+    count = len(Product.objects.filter(type__url__exact=category))
+
     context = {
         'menu': JSArray(get_with_active_menu(category)),
+        'category': type.name,
+        'count': count,
         'products': JSArray(get_products_for_category(category))
     }
 
