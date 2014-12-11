@@ -41,12 +41,18 @@ class Product(models.Model):
         features.append({'Артикул': self.number})
         features.append({'Металл': self.materials.all()[0].name})
 
-        gems = self.gems.all()
-        if len(gems):
-            gem = gems[0]
-            features.append({'Камень': gem.name})
+        gems = []
+        carats = []
+        for gem in self.gems.all()[:3]:
+            gems.append(gem.name)
             if gem.carat:
-                features.append({'Карат': gem.carat})
+                carats.append('%g' % gem.carat)
+            else:
+                carats.append('*')
+
+        if len(gems):
+            features.append({'Камень': ', '.join(gems)})
+            features.append({'Карат': ', '.join(carats)})
 
         return features
 
