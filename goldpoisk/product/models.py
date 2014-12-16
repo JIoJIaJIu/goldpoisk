@@ -2,7 +2,7 @@
 from os import path
 
 from django.db import models
-from django.db.models import Min, Max
+from django.db.models import Min, Max, Count
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -117,7 +117,7 @@ class Image(models.Model):
         return self.src.url
 
 def get_products_for_category(category):
-    products = Product.objects.filter(type__url__exact=category)
+    products = Product.objects.filter(type__url__exact=category, item__isnull=False)
     def eachProduct(product):
         items = product.item_set.all()
         if len(items) == 1:

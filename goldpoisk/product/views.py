@@ -15,13 +15,14 @@ renderer = pybem.BEMRender(os.path.abspath(settings.TEMPLATE_DIRS[0]))
 def category(req, category):
     #TODO:
     type = Type.objects.get(url=category)
-    count = len(Product.objects.filter(type__url__exact=category))
+    products = get_products_for_category(category)
+    count = len(products)
 
     context = {
         'menu': JSArray(get_with_active_menu(category)),
         'category': type.name,
-        'count': count,
-        'products': JSArray(get_products_for_category(category))
+        'count': len(products),
+        'products': JSArray(products)
     }
 
     html = renderer.render('index', context, req, 'pages.category')
@@ -31,17 +32,27 @@ def category(req, category):
 
 def product(req, id):
     try:
-        product = Product.objects.get(pk=id)
+        product = Product.objects.prefetch_related('item_set').get(pk=id)
     except Product.DoesNotExist:
+        raise Http404
+
+    if not len(product.item_set.all()):
         raise Http404
 
     category = product.type
     images = product.image_set.all()
+
+    # getting best item
+    best_item = product.item_set.all()[0]
     context = {
         'menu': JSArray(get_with_active_menu(category.url)),
         'item': {
             'title': product.name,
             'category': product.type.name,
+            'shop': best_item.shop.name,
+            'shopUrl': best_item.shop.url,
+            'buyUrl': best_item.buy_url,
+            'price': best_item.cost,
             'gallery': {
                 'images': JSArray(map(lambda i: i.get_absolute_url(), images)),
                 'mainImg': images[0].get_absolute_url(),
