@@ -71,11 +71,20 @@ class Product(models.Model):
         return '/id%d' % pk
 
     @classmethod
-    def get_by_category(cls, category, page=1, countPerPage=20):
+    def get_by_category(cls, category, page=1, countPerPage=20, sort=None):
         c = time()
         products = cls.objects.prefetch_related('image_set').filter(type__url__exact=category, item__isnull=False)
         products = products.annotate(count=Count('item'), min_cost=Min('item__cost'), max_cost=Max('item__cost'), carat=Max('gems__carat'))
         count = len(products)
+        if sort:
+            key = {
+                'price': lambda: products.order_by('max_cost'),
+                'tprice': lambda: products.order_by('-min_cost'),
+                'name': lambda: products.order_by('name'),
+            }[sort]
+            if key:
+                products = key()
+
         products = products.values(
             'pk',
             'name',

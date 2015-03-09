@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import copy
 import os
 import math
@@ -21,18 +22,30 @@ def category(req, category):
     countPerPage = 30
     products, count = Product.get_by_category(category, page, countPerPage)
 
+    json_list_url = req.path + '/list'
     context = {
         'menu': JSArray(get_with_active_menu(category)),
         'category': _type.name,
         'count': count,
         'products': products, #string
+        #TODO:
+        'sortParams': JSArray([{
+            'name': 'Сначала дорогие',
+            'url': json_list_url + '?sort=tprice',
+        }, {
+            'name': 'Сначала дешёвые',
+            'url': json_list_url + '?sort=price',
+        }, {
+            'name': 'По алфавиту',
+            'url': json_list_url + '?sort=name',
+        }]),
         'paginator': {
             'totalPages': math.ceil(count / countPerPage) or 1,
             'currentPage': page,
             'url': req.path,
             'config': {
                 'HTTP': {
-                    'list': req.path + '/list'
+                    'list': json_list_url
                 }
             }
         }
@@ -84,9 +97,10 @@ def product(req, id):
 def category_ajax(req, category):
     _type = Type.objects.get(url=category)
     page = req.GET.get('page', 1)
+    sort = req.GET.get('sort', None)
     
     countPerPage = 30
-    products, count = Product.get_by_category(category, page, countPerPage)
+    products, count = Product.get_by_category(category, page, countPerPage, sort=sort)
 
     c = time()
     json = renderer.render('index', products, req, "blocks['g-goods.str']", return_bemjson=True)
