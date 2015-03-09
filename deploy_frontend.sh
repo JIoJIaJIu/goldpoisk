@@ -4,7 +4,7 @@ cd goldpoisk/myproject
 echo 'Unzipping static..'
 unzip -o frontend.static.zip -d static
 
-if [$? -ne 0]; then
+if [ $? -ne 0 ]; then
     exit 1
 fi;
 
@@ -12,7 +12,7 @@ rm frontend.static.zip
 
 echo 'Unzipping frontend..'
 unzip -o frontend.zip -d frontend/index
-if [$? -ne 0]; then
+if [ $? -ne 0 ]; then
     exit 1
 fi;
 
