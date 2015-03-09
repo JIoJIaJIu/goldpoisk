@@ -1,31 +1,46 @@
 import copy
 import os
+import math
 from PyV8 import JSArray
 from pybem import pybem
+from time import time
 
 from django.http import HttpResponse, Http404
 from django.db.models import Min, Max
 
 from goldpoisk import settings
-from goldpoisk.product.models import Item, Type, Product, get_products_for_category
+from goldpoisk.product.models import Item, Type, Product
 from goldpoisk.templates import get_menu, get_with_active_menu
 
 renderer = pybem.BEMRender(os.path.abspath(settings.TEMPLATE_DIRS[0]))
 
 def category(req, category):
-    #TODO:
-    type = Type.objects.get(url=category)
-    products = get_products_for_category(category)
-    count = len(products)
+    _type = Type.objects.get(url=category)
+    page = req.GET.get('page', 1)
+    
+    countPerPage = 30
+    products, count = Product.get_by_category(category, page, countPerPage)
 
     context = {
         'menu': JSArray(get_with_active_menu(category)),
-        'category': type.name,
-        'count': len(products),
-        'products': JSArray(products)
+        'category': _type.name,
+        'count': count,
+        'products': products, #string
+        'paginator': {
+            'totalPages': math.ceil(count / countPerPage) or 1,
+            'currentPage': page,
+            'url': req.path,
+            'config': {
+                'HTTP': {
+                    'list': req.path + '/list'
+                }
+            }
+        }
     }
 
+    c = time()
     html = renderer.render('index', context, req, 'pages.category')
+    print 'Rendered %fs' % (time() - c)
 
     res = HttpResponse(html)
     return res
@@ -64,3 +79,17 @@ def product(req, id):
 
     html = renderer.render('index', context, req, 'pages.item')
     return HttpResponse(html)
+
+#TODO
+def category_ajax(req, category):
+    _type = Type.objects.get(url=category)
+    page = req.GET.get('page', 1)
+    
+    countPerPage = 30
+    products, count = Product.get_by_category(category, page, countPerPage)
+
+    c = time()
+    json = renderer.render('index', products, req, "blocks['g-goods.str']", return_bemjson=True)
+    print 'Rendered %fs' % (time() - c)
+
+    return HttpResponse(json, 'application/json')

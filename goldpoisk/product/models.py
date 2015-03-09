@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 from os import path
+from PyV8 import JSArray
+from time import time
+import json
 
 from django.db import models
 from django.db.models import Min, Max, Count
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder, Serializer as JSONSerializer
+from django.core.serializers import serialize
+from django.core.paginator import Paginator
 
 from goldpoisk.settings import MEDIA_URL, UPLOAD_TO
 from goldpoisk.shop.models import Shop
@@ -39,7 +46,7 @@ class Product(models.Model):
     def get_features(self):
         features = []
         features.append({'Артикул': self.number})
-        features.append({'Металл': self.materials.all()[0].name})
+        #features.append({'Металл': self.materials.all()[0].name})
 
         gems = []
         carats = []
@@ -58,6 +65,42 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return '/id%d' % self.pk
+
+    @classmethod
+    def _get_absolute_url(cls, pk):
+        return '/id%d' % pk
+
+    @classmethod
+    def get_by_category(cls, category, page=1, countPerPage=20):
+        c = time()
+        products = cls.objects.prefetch_related('image_set').filter(type__url__exact=category, item__isnull=False)
+        products = products.annotate(count=Count('item'), min_cost=Min('item__cost'), max_cost=Max('item__cost'), carat=Max('gems__carat'))
+        count = len(products)
+        products = products.values(
+            'pk',
+            'name',
+            'count',
+            'number',
+            'description',
+            'weight',
+            'min_cost',
+            'max_cost',
+            'item__shop__name',
+            'item__shop__url',
+            'item__buy_url',
+            'image__src',
+            'item__action',
+            'item__hit',
+            'carat',
+        )
+        paginator = Paginator(products, countPerPage)
+        print 'Request %fs' % (time() - c)
+
+        c = time()
+        json = ProductSerializer().serialize(paginator.page(page).object_list)
+        print 'Serializer %fs' % (time() - c)
+
+        return json, count
 
 class Item(models.Model):
     cost = models.PositiveIntegerField(_('Cost'))
@@ -116,49 +159,45 @@ class Image(models.Model):
     def get_absolute_url(self):
         return self.src.url
 
-def get_products_for_category(category):
-    products = Product.objects.filter(type__url__exact=category, item__isnull=False)
-    def eachProduct(product):
-        items = product.item_set.all()
-        if len(items) == 1:
-            return mapItem(items[0])
-
-        return mapProduct(product)
-    #products = products.annotate(min_cost=Min('item__cost'), max_cost=Max('item__cost'))
-
-    return map(eachProduct, products)
+    @classmethod
+    def _get_absolute_url(cls, src):
+        return '/media/%s' % src 
 
 def get_products_for_main():
     bids = BestBid.objects.all().prefetch_related('item')
     return map(mapItem, [bid.item for bid in bids])
 
 def mapProduct(product):
-    image = product.image_set.first()
+    images = product.image_set
+    image = images.first()
     price = 0
     if hasattr(product, 'min_cost'):
         price = product.min_cost
     return {
         'title': product.name,
+        'number': product.number,
         'price': price,
-        'imageUrl': image and image.get_absolute_url(),
+        'image': image and image.get_absolute_url(),
+        'images': JSArray(map(lambda x: x.get_absolute_url(), images.all()) ),
         'url': product.get_absolute_url(),
         'weight': product.get_weight(),
         'carat': product.get_carat(),
     }
 
 def mapItem(item):
-    product = mapProduct(item.product)
-
-    product.update({
+    data = {
         'store': item.shop.name,
         'storeUrl': item.shop.url,
         'price': item.cost,
-        'buyUrl': item.buy_url
-    })
+        'buyUrl': item.buy_url,
+        'count': 1
+    }
+
+    data.update(mapProduct(item.product))
 
     try:
         item.action is not None
-        product.update({
+        data.update({
             'action': True
         })
     except ObjectDoesNotExist:
@@ -166,10 +205,37 @@ def mapItem(item):
 
     try:
         item.hit is not None
-        product.update({
+        data.update({
             'hit': True
         })
     except ObjectDoesNotExist:
         pass
 
-    return product
+    return data
+
+class ProductSerializer(object):
+    def serialize(self, products):
+        l = []
+        for p in products:
+            #TODO:
+            if p['carat']:
+                carat = "%g" % p['carat']
+            else:
+                carat = None
+            l.append({
+                'title': p['name'],
+                'count': p['count'],
+                'image': Image._get_absolute_url(p['image__src']),
+                'url': Product._get_absolute_url(p['pk']),
+                'carat': carat,
+                'number': p['number'],
+                'weight': '%g гр.' % p['weight'],
+                'minPrice': p['min_cost'],
+                'maxPrice': p['max_cost'],
+                'shopName': p['item__shop__name'],
+                'shopUrl': p['item__shop__url'],
+                'buyUrl': p['item__buy_url'],
+                'action': bool(p['item__action']),
+                'hit': bool(p['item__hit']),
+            })
+        return json.dumps(l)

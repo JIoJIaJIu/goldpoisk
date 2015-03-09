@@ -11,9 +11,9 @@ def get_with_active_menu(category):
             item['isActive'] = True
     return menu
 
-def get_menu_regexp():
+def get_menu_regexp(at_end=''):
     category = [x.get('href') for x in get_menu()]
-    category_re = '^(?P<category>' + '|'.join(category) + ')$'
+    category_re = '^(?P<category>' + '|'.join(category) + ')' + at_end + '$'
     return category_re
 
 def mapMenu(item):

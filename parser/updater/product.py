@@ -31,7 +31,8 @@ class Product(object):
         update = False
 
         if product.name != data['name']:
-            raise Exception(product.name, ':', data['name'])
+            #raise Exception(product.name, ':', data['name'])
+            self.logger.error('Name:\n %s\n %s' % (product.name, data['name']))
 
         desc = data.get('description', None)
         if not self.match(product.description, desc):
