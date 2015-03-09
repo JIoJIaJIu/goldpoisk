@@ -1,6 +1,6 @@
 import MySQLdb as mdb
+from md5 import md5
 from _mysql_exceptions import OperationalError
-from PIL import Image
 
 USER_NAME = 'dev_goldpoisk'
 USER_PASSWORD = 'dev12345'
@@ -11,14 +11,25 @@ def connect ():
     print 'Was opened connection'
     return con
 
-def save_images (cursor):
+def save_images (cursor, con):
     cursor.execute('SELECT * from goldpoisk_entity_images')
-    images = cursor.fetchmany(10000) #TODO 10000
-    image = images[0]
+    keychain = []
+    images = cursor.fetchall()
     for i, image in enumerate(images):
-        f = open('images/img-%d.jpg' % i, 'w+')
+        id = image[2]
+        blob = image[1]
+
+        hash = md5(blob).hexdigest()
+        keychain.append(hash)
+
+        src = 'product/%s.jpg' % hash
+        print '> %d > %s' % (id, src)
+        f = open(src, 'w+')
         f.write(image[1])
+        sql = 'UPDATE goldpoisk_entity_images set src="%s" where id=%d;' % (src, id)
+        cursor.execute(sql)
         f.close()
+    con.commit()
 
 
 def alter_table (cursor):
@@ -34,4 +45,5 @@ if __name__ == '__main__':
     cursor = con.cursor()
 
     alter_table(cursor)
-    save_images(cursor)
+    save_images(cursor, con)
+    cursor.close()
