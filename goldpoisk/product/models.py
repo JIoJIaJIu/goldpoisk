@@ -75,7 +75,8 @@ class Product(models.Model):
         c = time()
         products = cls.objects.prefetch_related('image_set').filter(type__url__exact=category, item__isnull=False)
         products = products.annotate(count=Count('item'), min_cost=Min('item__cost'), max_cost=Max('item__cost'), carat=Max('gems__carat'))
-        count = len(products)
+        #TODO: optimize
+        count = products.aggregate(count=Count('number'))['count']
         if sort:
             key = {
                 'price': lambda: products.order_by('max_cost'),
