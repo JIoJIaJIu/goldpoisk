@@ -20,8 +20,8 @@ fi;
 
 echo 'Unzipping static..'
 unzip -o frontend.static.zip -d static
-cp frontend/index/index.bemhtml.js static/
-cp frontend/index/index.priv.js static/
+cp frontend/index/index.bemhtml.js static/js/
+cp frontend/index/index.priv.js static/js/
 
 if [ $? -ne 0 ]; then
     exit 1
