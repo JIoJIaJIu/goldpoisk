@@ -18,7 +18,7 @@ renderer = pybem.BEMRender(os.path.abspath(settings.TEMPLATE_DIRS[0]))
 def category(req, category):
     _type = Type.objects.get(url=category)
     page = req.GET.get('page', 1)
-    
+
     countPerPage = 30
     products, count = Product.get_by_category(category, page, countPerPage)
 
@@ -30,14 +30,14 @@ def category(req, category):
         'products': products, #string
         #TODO:
         'sortParams': JSArray([{
+            'name': 'По алфавиту',
+            'url': json_list_url + '?sort=name',
+        }, {
             'name': 'Сначала дорогие',
             'url': json_list_url + '?sort=tprice',
         }, {
             'name': 'Сначала дешёвые',
             'url': json_list_url + '?sort=price',
-        }, {
-            'name': 'По алфавиту',
-            'url': json_list_url + '?sort=name',
         }]),
         'paginator': {
             'totalPages': math.ceil(count / countPerPage) or 1,

@@ -79,13 +79,14 @@ class Product(models.Model):
         count = products.aggregate(count=Count('number'))['count']
         if sort:
             key = {
-                'price': lambda: products.order_by('max_cost'),
-                'tprice': lambda: products.order_by('-min_cost'),
+                'price': lambda: products.order_by('min_cost'),
+                'tprice': lambda: products.order_by('-max_cost'),
                 'name': lambda: products.order_by('name'),
             }[sort]
             if key:
                 products = key()
 
+        #TODO:
         products = products.values(
             'pk',
             'name',
