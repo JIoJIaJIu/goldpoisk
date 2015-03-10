@@ -22,12 +22,15 @@ def main(req):
         'media/promotion/promotion_01.jpg',
         'media/promotion/promotion_02.jpg',
         'media/promotion/promotion_03.jpg',
+        'media/promotion/promotion_04.jpg',
+        'media/promotion/promotion_05.jpg',
+        'media/promotion/promotion_06.jpg',
     ]
     shuffle(promo)
 
     context = {
         'menu': JSArray(get_menu()),
-        'promo': promo,
+        'promo': JSArray(promo),
         'products': JSArray(get_products_for_main()),
     }
 
