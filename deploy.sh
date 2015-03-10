@@ -20,7 +20,7 @@ mv myproject/goldpoisk/settings.prod.py myproject/goldpoisk/settings.py
 sleep 1
 
 echo 'Copy third-parties..'
-cp -rv archives/myproject.${BUILD_NUMBER}/static/third-parties myproject/static
+cp -rv archives/myproject.${BUILD_NUMBER}/static/js/third-parties myproject/static
 
 echo 'Migrations..'
 echo 'Copy migration goldpoisk'
