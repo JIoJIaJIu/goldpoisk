@@ -92,18 +92,3 @@ def product(req, id):
 
     html = renderer.render('index', context, req, 'pages.item')
     return HttpResponse(html)
-
-#TODO
-def category_ajax(req, category):
-    _type = Type.objects.get(url=category)
-    page = req.GET.get('page', 1)
-    sort = req.GET.get('sort', None)
-    
-    countPerPage = 30
-    products, count = Product.get_by_category(category, page, countPerPage, sort=sort)
-
-    c = time()
-    json = renderer.render('index', products, req, "blocks['g-goods.str']", return_bemjson=True)
-    print 'Rendered %fs' % (time() - c)
-
-    return HttpResponse(json, 'application/json')

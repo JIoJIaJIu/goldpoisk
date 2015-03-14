@@ -10,16 +10,11 @@ from pybem import pybem
 from django.http import HttpResponse
 from django.conf import settings
 
-from goldpoisk.templates import get_menu
+from goldpoisk.templates import get_menu, get_renderer
 from goldpoisk.product.models import get_products_for_main
 
-class JS(JSClass):
-    def log(self, *args):
-        print args
 
-renderer = pybem.BEMRender(os.path.abspath(settings.TEMPLATE_DIRS[0]), toplevelcls=JS)
-
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('goldpoisk')
 
 def main(req):
     logger.debug('Requesting main')
@@ -42,7 +37,7 @@ def main(req):
     logger.info('Generating context: %gs' % (time() - ctime))
     ctime = time()
 
-    html = renderer.render('index', context, req, 'pages.index')
+    html = get_renderer().render('index', context, req, 'pages.index')
     logger.info('Render: %gs' % (time() - ctime))
 
     res = HttpResponse(html);
@@ -54,6 +49,6 @@ def best(req):
         'products': JSArray(get_products_for_main()),
     }
 
-    html = renderer.render('index', context, req, 'pages.category')
+    html = get_renderer().render('index', context, req, 'pages.category')
     res = HttpResponse(html);
     return res
