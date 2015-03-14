@@ -156,7 +156,7 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s: %(module)s pid=%(process)d thread=%(thread)d %(message)s'
+            'format': '%(levelname)s: %(asctime)s %(module)s pid=%(process)d thread=%(thread)d %(message)s'
         }
     },
     'handlers': {
