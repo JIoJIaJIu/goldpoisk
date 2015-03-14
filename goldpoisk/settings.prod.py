@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'goldpoisk',
+    'goldpoisk.ajax',
     'goldpoisk.product',
     'goldpoisk.shop',
     'goldpoisk.shop.manage',
@@ -183,9 +184,9 @@ LOGGING = {
             'handlers': ['common', 'mail_admins'],
             'level': 'INFO',
         },
-        'goldpoisk.views': {
+        'goldpoisk': {
             'handlers': ['goldpoisk'],
             'level': 'DEBUG',
-        },
+        }
     }
 }
