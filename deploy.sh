@@ -8,7 +8,7 @@ mv myproject arhives/myproject.${BUILD_NUMBER}
 
 echo 'Stopping u[w]sgi..';
 pr=$(ps -ef | grep [w]sgi | awk '{print $2}')
-if [ -n "$pr" ];then
+if [ -n "$pr" ]; then
     echo 'processes' $pr
     kill $pr
     sleep 1
@@ -20,7 +20,10 @@ mv myproject/goldpoisk/settings.prod.py myproject/goldpoisk/settings.py
 sleep 1
 
 echo 'Copy third-parties..'
-cp -rv arhives/myproject.${BUILD_NUMBER}/static/js/third-parties myproject/static
+cp -rv arhives/myproject.${BUILD_NUMBER}/static/js/third-parties myproject/static/js/
+if [ $? -ne 0 ]; then
+    exit 1
+fi
 
 echo 'Migrations..'
 echo 'Copy migration goldpoisk'
