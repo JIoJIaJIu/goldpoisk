@@ -20,6 +20,8 @@ mv myproject/goldpoisk/settings.prod.py myproject/goldpoisk/settings.py
 sleep 1
 
 echo 'Copy third-parties..'
+mkdir -p myproject/static
+mkdir -p myproject/static/js
 cp -rv arhives/myproject.${BUILD_NUMBER}/static/js/third-parties myproject/static/js/
 if [ $? -ne 0 ]; then
     exit 1
