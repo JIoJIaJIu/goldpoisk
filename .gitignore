@@ -1,6 +1,7 @@
 wiki/*
 media/*
 static/*
+logs/*
 
 *.swo
 *.swp
