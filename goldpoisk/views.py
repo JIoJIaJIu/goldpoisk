@@ -8,7 +8,6 @@ from PyV8 import JSClass, JSArray
 from pybem import pybem
 
 from django.http import HttpResponse
-from django.conf import settings
 
 from goldpoisk.templates import get_menu, get_renderer
 from goldpoisk.product.models import get_products_for_main
