@@ -22,7 +22,7 @@ def category(req, category):
     countPerPage = 30
     products, count = Product.get_by_category(category, page, countPerPage)
 
-    json_list_url = req.path + '/list'
+    json_list_url = req.path + '/json'
     context = {
         'menu': JSArray(get_with_active_menu(category)),
         'category': _type.name,

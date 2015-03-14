@@ -108,7 +108,7 @@ class Product(models.Model):
         print 'Request %fs' % (time() - c)
 
         c = time()
-        json = ProductSerializer().serialize(paginator.page(page).object_list)
+        json = ProductListSerializer().serialize(paginator.page(page).object_list)
         print 'Serializer %fs' % (time() - c)
 
         return json, count
@@ -224,7 +224,7 @@ def mapItem(item):
 
     return data
 
-class ProductSerializer(object):
+class ProductListSerializer(object):
     def serialize(self, products):
         l = []
         for p in products:
@@ -233,11 +233,13 @@ class ProductSerializer(object):
                 carat = "%g" % p['carat']
             else:
                 carat = None
+
+            url = Product._get_absolute_url(p['pk'])
             l.append({
                 'title': p['name'],
                 'count': p['count'],
                 'image': Image._get_absolute_url(p['image__src']),
-                'url': Product._get_absolute_url(p['pk']),
+                'url': url,
                 'carat': carat,
                 'number': p['number'],
                 'weight': '%g гр.' % p['weight'],
@@ -248,5 +250,29 @@ class ProductSerializer(object):
                 'buyUrl': p['item__buy_url'],
                 'action': bool(p['item__action']),
                 'hit': bool(p['item__hit']),
+                'jsonUrl': url + '/json',
             })
         return json.dumps(l)
+
+class ProductSerializer(object):
+    def serialize(self, product):
+        return json.dumps({
+            'title': product.name,
+            'images': map(lambda x: x.get_absolute_url(), product.image_set.all()),
+            'number': product.number,
+            'weight': '%g гр.' % product.weight,
+            'description': product.description,
+            'items': ItemListSerializer().serialize(product.item_set.all()),
+        })
+
+class ItemListSerializer(object):
+    def serialize(self, items):
+        l = []
+        for item in items:
+            l.append({
+                'price': item.cost,
+                'buyUrl': item.buy_url,
+                'storeName': item.shop.name,
+                'storeUrl': item.shop.url,
+            })
+        return l
