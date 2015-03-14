@@ -1,8 +1,10 @@
 # Django settings for alljewel project.
 import sys
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+
+ALLOWED_HOSTS = ['goldpoisk.ru']
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -152,18 +154,38 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s: %(module)s pid=%(process)d thread=%(thread)d %(message)s'
+        }
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'common': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': './logs/common.log',
+            'formatter': 'verbose',
+        },
+        'goldpoisk': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': './logs/goldpoisk.log',
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
+            'handlers': ['common', 'mail_admins'],
+            'level': 'INFO',
+        },
+        'goldpoisk.views': {
+            'handlers': ['goldpoisk'],
+            'level': 'DEBUG',
         },
     }
 }
