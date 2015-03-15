@@ -104,6 +104,11 @@ class Product(models.Model):
             'item__hit',
             'carat',
         )
+
+        #TODO: optimize
+        s = set()
+        products = [ p for p in products if not (p['pk'] in s or s.add(p['pk']))]
+
         paginator = Paginator(products, countPerPage)
         print 'Request %fs' % (time() - c)
 
