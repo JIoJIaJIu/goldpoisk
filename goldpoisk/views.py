@@ -4,14 +4,15 @@ import copy
 import logging
 from random import shuffle
 from time import time
-from PyV8 import JSClass, JSArray
+
+from PyV8 import JSArray
 from pybem import pybem
 
 from django.http import HttpResponse
 
-from goldpoisk.templates import get_menu, get_renderer
+from goldpoisk import js
+from goldpoisk.templates import get_menu
 from goldpoisk.product.models import get_products_for_main
-
 
 logger = logging.getLogger('goldpoisk')
 
@@ -34,9 +35,9 @@ def main(req):
         'products': JSArray(get_products_for_main()),
     }
     logger.info('Generating context: %gs' % (time() - ctime))
-    ctime = time()
 
-    html = get_renderer().render('index', context, req, 'pages.index')
+    ctime = time()
+    html = js.render(context, 'pages.index')
     logger.info('Render: %gs' % (time() - ctime))
 
     res = HttpResponse(html);
@@ -48,6 +49,6 @@ def best(req):
         'products': JSArray(get_products_for_main()),
     }
 
-    html = get_renderer().render('index', context, req, 'pages.category')
+    html = js.render(context, 'pages.category')
     res = HttpResponse(html);
     return res
