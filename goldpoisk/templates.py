@@ -11,7 +11,7 @@ from goldpoisk.product.models import Type
 logger = logging.getLogger('goldpoisk')
 
 def get_menu():
-    return map(map_menu, Type.objects.all())
+    return map(map_menu, Type.objects.all().order_by('pk'))
 
 def get_with_active_menu(category): 
     menu = get_menu();
