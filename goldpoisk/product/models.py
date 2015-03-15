@@ -261,6 +261,8 @@ class ProductSerializer(object):
             'images': map(lambda x: x.get_absolute_url(), product.image_set.all()),
             'number': product.number,
             'weight': '%g гр.' % product.weight,
+            'gems': GemListSerializer().serialize(product.gems.all()),
+            'materials': map(lambda x: x.name, product.materials.all()),
             'description': product.description,
             'items': ItemListSerializer().serialize(product.item_set.all()),
         })
@@ -274,5 +276,15 @@ class ItemListSerializer(object):
                 'buyUrl': item.buy_url,
                 'storeName': item.shop.name,
                 'storeUrl': item.shop.url,
+            })
+        return l
+
+class GemListSerializer(object):
+    def serialize(self, gems):
+        l = []
+        for gem in gems:
+            l.append({
+                'name': gem.name,
+                'carat': "%g" % gem.carat
             })
         return l
