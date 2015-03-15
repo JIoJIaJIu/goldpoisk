@@ -32,7 +32,7 @@ if 'test' in sys.argv:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'Europe/Moscow'
+TIME_ZONE = 'Asia/Bangkok'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -158,7 +158,7 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(asctime)s %(levelname)s: %(module)s pid=%(process)d thread=%(thread)d %(message)s'
+            'format': '%(asctime)s %(levelname)s: %(funcName)s pid=%(process)d thread=%(thread)d %(threadName)s %(message)s'
         }
     },
     'handlers': {
@@ -166,6 +166,10 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
         },
         'common': {
             'level': 'INFO',
@@ -182,11 +186,11 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
-            'handlers': ['common', 'mail_admins'],
+            'handlers': ['common', 'console', 'mail_admins'],
             'level': 'INFO',
         },
         'goldpoisk': {
-            'handlers': ['goldpoisk'],
+            'handlers': ['goldpoisk', 'console'],
             'level': 'DEBUG',
         }
     }
