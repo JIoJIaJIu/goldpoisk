@@ -31,9 +31,3 @@ def map_menu(item):
         'type': item.type,
         'label': item.name
     }
-
-def get_renderer():
-    ctime = time()
-    renderer = pybem.BEMRender(os.path.abspath(settings.TEMPLATE_DIRS[0]))
-    logger.info('Getting renderer: %gs' % (time() - ctime))
-    return renderer
