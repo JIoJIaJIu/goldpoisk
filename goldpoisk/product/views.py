@@ -9,11 +9,9 @@ from time import time
 from django.http import HttpResponse, Http404
 from django.db.models import Min, Max
 
-from goldpoisk import settings
+from goldpoisk import settings, js
 from goldpoisk.product.models import Item, Type, Product
 from goldpoisk.templates import get_menu, get_with_active_menu
-
-renderer = pybem.BEMRender(os.path.abspath(settings.TEMPLATE_DIRS[0]))
 
 def category(req, category):
     _type = Type.objects.get(url=category)
@@ -52,7 +50,7 @@ def category(req, category):
     }
 
     c = time()
-    html = renderer.render('index', context, req, 'pages.category')
+    html = js.render(context, 'pages.category')
     print 'Rendered %fs' % (time() - c)
 
     res = HttpResponse(html)
@@ -90,5 +88,5 @@ def product(req, id):
         },
     }
 
-    html = renderer.render('index', context, req, 'pages.item')
+    html = js.render(context, 'pages.item')
     return HttpResponse(html)
