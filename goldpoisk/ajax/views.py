@@ -38,7 +38,7 @@ def product(req, id):
     product = ProductSerializer().serialize(product)
 
     ctime = time()
-    json = js.render(product, "blocks['g-item.str']", bemjson=True, env={js: True})
+    json = js.render(product, "blocks['g-item.str']", bemjson=True, env={'js': True})
     logger.info('Rendered %gs' % (time() - ctime))
 
     return HttpResponse(json, 'application/json')
