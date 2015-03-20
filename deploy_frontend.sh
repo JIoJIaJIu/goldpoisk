@@ -17,7 +17,7 @@ sleep 1;
 
 cd ~/goldpoisk
 ~/bin/uwsgi ~/goldpoisk/myproject/production.ini &
-cd goldpoisk/myproject
+cd ~/goldpoisk/myproject
 
 if [ $? -ne 0 ]; then
     exit 1
