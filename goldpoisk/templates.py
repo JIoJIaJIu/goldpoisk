@@ -2,7 +2,6 @@
 import os
 import logging
 from time import time
-from pybem import pybem
 
 from django.conf import settings
 

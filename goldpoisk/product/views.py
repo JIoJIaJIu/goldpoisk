@@ -3,7 +3,6 @@ import copy
 import os
 import math
 from PyV8 import JSArray
-from pybem import pybem
 from time import time
 
 from django.http import HttpResponse, Http404

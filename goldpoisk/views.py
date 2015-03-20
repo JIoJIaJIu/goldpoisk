@@ -6,7 +6,6 @@ from random import shuffle
 from time import time
 
 from PyV8 import JSArray
-from pybem import pybem
 
 from django.http import HttpResponse
 
