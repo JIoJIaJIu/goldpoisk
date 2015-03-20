@@ -14,7 +14,9 @@ pr=$(ps -ef | grep [w]sgi | awk '{print $2}')
 echo $pr
 kill -2 $pr
 sleep 1;
-~/bin/uwsgi ~/golpoisk/myproject/production.ini &
+
+cd ~/goldpoisk
+~/bin/uwsgi ~/goldpoisk/myproject/production.ini &
 
 if [ $? -ne 0 ]; then
     exit 1
