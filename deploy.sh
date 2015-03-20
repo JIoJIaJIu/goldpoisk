@@ -38,5 +38,5 @@ sleep 1
 
 rm backend.zip
 echo 'Restart uwsgi && nginx..'
-~/bin/uwsgi --master ~/goldpoisk/myproject/production.ini &
+~/bin/uwsgi ~/goldpoisk/myproject/production.ini &
 ./nginx/sbin/nginx -s reload

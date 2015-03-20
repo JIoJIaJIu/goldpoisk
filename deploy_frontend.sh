@@ -12,9 +12,9 @@ rm frontend.zip
 echo 'Restarting uwsgi..'
 kill $(ps -ef | grep [w]sgi | awk '{print $2}')
 sleep 1;
-uwsgi --master ~/golpoisk/myproject/production.ini &
+uwsgi ~/golpoisk/myproject/production.ini &
 
-if [$? -ne 0]; then
+if [ $? -ne 0 ]; then
     exit 1
 fi;
 
