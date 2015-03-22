@@ -34,16 +34,17 @@ class Updater(object):
         SELECT article, name, material, weight, url
         FROM goldpoisk_entity as entity
         """
-        m_cur = self.mysql.cursor()
-        m_cur.execute(sql)
-        rows = m_cur.fetchall()
+        cursor = self.mysql.cursor()
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        cursor.close()
         print "\tSpended time %fs" % (time.time() -  current_time)
         print "\tRows: %d" % len(rows)
         self.rows = self.convert(rows)
-        self.create_products(self.rows)
         return self
 
-    def create_products(self, rows):
+    def create_products(self):
+        rows = self.rows
         gem_sql = """
         SELECT name, weight
         FROM goldpoisk_kamni
@@ -58,7 +59,7 @@ class Updater(object):
         cursor = self.mysql.cursor()
         for row in rows:
             number = row['number']
-            product = Product(number, TYPE_ID) 
+            product = Product(number, TYPE_ID)
 
             cursor.execute(gem_sql % number)
             gems = cursor.fetchall()
@@ -79,8 +80,38 @@ class Updater(object):
     def __exit__(self, type, value, tb):
         self.mysql.close()
         self.postgres.close()
-    
-    def merge(self):
+
+    def price_hook(self):
+        sql = """
+        SELECT article, price, description
+        FROM goldpoisk_other
+        WHERE article='%s'
+        """
+        cursor = self.mysql.cursor()
+        d = []
+        for row in self.rows:
+            cursor.execute(sql % row['number'])
+            data = cursor.fetchall()
+            if len(data) != 1:
+                print('Length: %d' % len(data))
+                print(row['number'])
+                d.append(row['number'])
+                continue
+
+            data = data[0]
+            product = Product(row['number'], TYPE_ID)
+            data = {
+                'price': int(data[1].replace('р.', '').strip()),
+                'description': data[2].decode('utf-8'),
+            }
+            product.update_price(data['price'])
+            product.update_desc(data['description'])
+
+        cursor.close()
+        print ', '.join(d)
+
+
+    def _merge(self):
         print "Merging.."
         print "\tJOIN 2 mysql tables"
         current_time = time.time()
@@ -112,7 +143,7 @@ class Updater(object):
             item = self.get_product_by_article(article)
             if not item:
                 print "Inserting >", article
-                sql =""" 
+                sql ="""
                     INSERT INTO product_product
                     (type_id, name, number, description, weight) VALUES
                     (%d, '%s', '%s', 'Отсутсвует', %f)
@@ -125,7 +156,7 @@ class Updater(object):
             else:
                 print "Founded >", article
 
-            
+
             row['id'] = item[0]
         cursor.close()
 
@@ -156,7 +187,7 @@ class Updater(object):
             print images
             for image in images:
                 p_cursor.execute(p_images_sql % (row['id'], image[0]))
-                if p_cursor.fetchone(): 
+                if p_cursor.fetchone():
                     print '\tFounded >', image[0]
                 else:
                     p_cursor.execute(p_insert_sql % (row['id'], image[0]))
@@ -199,7 +230,7 @@ class Updater(object):
     def get_product_by_article(self, article):
         cursor = self.postgres.cursor()
         sql = """
-            SELECT * from product_product 
+            SELECT * from product_product
             WHERE number = '%s'
             """ % article
         cursor.execute(sql)
@@ -222,7 +253,7 @@ class Updater(object):
                 'number': row[0],
                 'name': name,
                 'material': row[2],
-                'weight': weight, 
+                'weight': weight,
                 'url': row[4]
             })
         return d

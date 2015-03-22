@@ -10,7 +10,7 @@ from goldpoisk.product.models import Product as model, Material, Gem, Image, Typ
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "goldpoisk.settings")
 django.setup()
 
-SHOP_ID = 1
+SHOP_ID = 2
 
 class Product(object):
     def __init__(self, number, type_id, level=0):
@@ -153,6 +153,35 @@ class Product(object):
         assert(data['url'])
         self.set_item(data['url'], product)
 
+
+    #HACK
+    def update_price(self, price):
+        if not self.me:
+            raise Exception('No product')
+
+        item = Item.objects.get(shop=self.shop, product=self.me)
+
+        if item.cost == price:
+            return
+
+        item.cost = price
+        item.save()
+        self.logger.debug('Price: %d' % price)
+
+    #HACK
+    def update_desc(self, desc):
+        if not self.me:
+            raise Exception('No product')
+
+        if not desc:
+            return
+
+        if self.me.description == desc:
+            return
+
+        self.me.description = desc
+        self.me.save()
+        self.logger.debug('Price: %s' % desc)
 
     def match(self, db_field, field):
         if not field:
