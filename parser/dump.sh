@@ -22,29 +22,24 @@ TABLES="product_product_gems \
         product_item \
         product_material \
         product_gem \
-        product_image \
-        shop_shop \
-        shop_admin \
-        shop_manager"
-
-function concat {
-    for i in $@; do
-        RES+="|"+$i
-    done
-}
+        product_image"
 
 function export_dump {
     echo "Creating dump.."
-
     set -o xtrace
     $PGDUMP --schema=public --table="(`echo $TABLES | tr ' ' '|'`)" > dump.sql
     set +o xtrace
 }
 
-DUMP=dump.sql
+DUMP=${DUMP:-dump.sql}
 
 function upload_dump {
     echo "Upload dump.."
+    if [ ! -f $DUMP ]; then
+        echo "No dump $DUMP!"
+        exit 1
+    fi
+
     set -o xtrace
     $PSQL -c "DROP TABLE `echo $TABLES | tr ' ' ','`"
     $PSQL < $DUMP
