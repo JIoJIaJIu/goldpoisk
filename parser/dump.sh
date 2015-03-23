@@ -7,6 +7,7 @@ DB_HOST=localhost
 function show_help {
     echo "Usage.."
     echo "-c|--create create dump"
+    echo "-u|--upload upload dump"
     echo "-h|--help show this help"
 }
 
@@ -31,17 +32,16 @@ function export_dump {
     set +o xtrace
 }
 
-DUMP=${DUMP:-dump.sql}
-
+DUMP=$2
 function upload_dump {
     echo "Upload dump.."
     if [ ! -f $DUMP ]; then
-        echo "No dump $DUMP!"
+        echo "No dump $2!"
         exit 1
     fi
 
     set -o xtrace
-    $PSQL -c "DROP TABLE `echo $TABLES | tr ' ' ','`"
+    $PSQL -c "DROP TABLE if exists `echo $TABLES | tr ' ' ','`"
     $PSQL < $DUMP
     set +o xtrace
 }
