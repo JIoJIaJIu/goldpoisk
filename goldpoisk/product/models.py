@@ -290,6 +290,9 @@ class ProductSerializer(object):
             'materials': map(lambda x: x.name, product.materials.all()),
             'description': product.description,
             'items': ItemListSerializer().serialize(product.item_set.all()),
+            'yashare': {
+                'url': product.get_absolute_url()
+            }
         })
 
 class ItemListSerializer(object):
