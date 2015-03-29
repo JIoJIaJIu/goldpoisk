@@ -46,3 +46,9 @@ def render (data, entry_point, bemjson=False, env=None):
 
             return c.eval('BEMHTML.apply(%s(context, env))' % entry_point)
 
+def eval (str):
+    with JSLocker():
+        with JSContext() as c:
+            val = c.eval(str)
+
+    return val
