@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
 from os import path
 from PyV8 import JSArray
 from time import time
-import json
 
 from django.db import models
 from django.db.models import Min, Max, Count
@@ -16,6 +16,7 @@ from django.core.paginator import Paginator
 from goldpoisk.settings import MEDIA_URL, UPLOAD_TO
 from goldpoisk.shop.models import Shop
 from goldpoisk.models import BestBid
+from goldpoisk import js
 
 class Product(models.Model):
     type = models.ForeignKey('Type', verbose_name=_('Type'))
@@ -118,6 +119,57 @@ class Product(models.Model):
 
         return json, count
 
+    #TODO: hardcode motherfucker
+    @classmethod
+    def get_bids(cls, page=1, countPerPage=30):
+        def mapItem(item):
+            action = False
+            hit = False
+            try:
+                if item.action is not None:
+                    action = True
+            except ObjectDoesNotExist as e:
+                pass
+
+            try:
+                if item.hit is not None:
+                    hit = True
+            except ObjectDoesNotExist as e:
+                pass
+
+            url = item.product.get_absolute_url();
+            data = {
+                'title': item.product.name,
+                'count': 1,
+                'image': item.product.image_set.first().get_absolute_url(),
+                'url': url,
+                'carat': item.product.get_carat(),
+                'number': item.product.number,
+                'weight': '%g гр.' % item.product.weight,
+                'minPrice': item.cost,
+                'shopName': item.shop.name,
+                'shopUrl': item.shop.url,
+                'buyUrl': item.buy_url,
+                'action': action,
+                'hit': hit,
+                'jsonUrl': url + '/json',
+            }
+            return data
+
+        c = time()
+        bids = BestBid.objects.all().prefetch_related('item')
+        print 'Request %fs' % (time() - c)
+
+        count = len(bids)
+
+        c = time()
+        bids = map(mapItem, [bid.item for bid in bids])
+        print 'Map %fs' % (time() - c)
+
+        paginator = Paginator(bids, countPerPage)
+
+        return json.dumps(paginator.page(page).object_list), count;
+
 class Item(models.Model):
     cost = models.PositiveIntegerField(_('Cost'))
     quantity = models.PositiveSmallIntegerField(_('Quantity'))
@@ -179,10 +231,6 @@ class Image(models.Model):
     def _get_absolute_url(cls, src):
         return '/media/%s' % src 
 
-def get_products_for_main():
-    bids = BestBid.objects.all().prefetch_related('item')
-    return map(mapItem, [bid.item for bid in bids])
-
 def mapProduct(product):
     images = product.image_set
     image = images.first()
@@ -200,34 +248,6 @@ def mapProduct(product):
         'carat': product.get_carat(),
     }
 
-def mapItem(item):
-    data = {
-        'store': item.shop.name,
-        'storeUrl': item.shop.url,
-        'price': item.cost,
-        'buyUrl': item.buy_url,
-        'count': 1
-    }
-
-    data.update(mapProduct(item.product))
-
-    try:
-        item.action is not None
-        data.update({
-            'action': True
-        })
-    except ObjectDoesNotExist:
-        pass
-
-    try:
-        item.hit is not None
-        data.update({
-            'hit': True
-        })
-    except ObjectDoesNotExist:
-        pass
-
-    return data
 
 class ProductListSerializer(object):
     def serialize(self, products):

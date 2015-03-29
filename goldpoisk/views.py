@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+import json
 import os
 import copy
 import logging
@@ -11,7 +12,7 @@ from django.http import HttpResponse
 
 from goldpoisk import js
 from goldpoisk.templates import get_menu
-from goldpoisk.product.models import get_products_for_main
+from goldpoisk.product.models import Product
 
 logger = logging.getLogger('goldpoisk')
 
@@ -26,12 +27,20 @@ def main(req):
         'media/promotion/promotion_06.jpg',
     ]
     shuffle(promo)
+    products, count = Product.get_bids(1, 5)
+    if req.is_ajax():
+        return HttpResponse(json.dumps({
+            'promo': promo,
+            'products': json.loads(products),
+            'count': count
+        }))
 
     ctime = time()
     context = {
         'menu': JSArray(get_menu()),
         'promo': JSArray(promo),
-        'products': JSArray(get_products_for_main()),
+        'products': js.eval(products),
+        'count': count
     }
     logger.info('Generating context: %gs' % (time() - ctime))
 
@@ -39,15 +48,5 @@ def main(req):
     html = js.render(context, 'pages.index')
     logger.info('Render: %gs' % (time() - ctime))
 
-    res = HttpResponse(html);
-    return res
-
-def best(req):
-    context = {
-        'menu': JSArray(get_menu()),
-        'products': JSArray(get_products_for_main()),
-    }
-
-    html = js.render(context, 'pages.category')
     res = HttpResponse(html);
     return res
