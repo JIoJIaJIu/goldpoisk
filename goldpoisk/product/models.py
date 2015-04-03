@@ -35,6 +35,9 @@ class Product(models.Model):
     def __unicode__(self):
         return '%s %s' % (self.name, self.number)
 
+    def json(self):
+        return ProductSerializer().serialize(self)
+
     def get_weight(self):
         return '%g грамм' % self.weight
 
@@ -283,6 +286,7 @@ class ProductSerializer(object):
     def serialize(self, product):
         return json.dumps({
             'title': product.name,
+            'url': product.get_absolute_url(),
             'images': map(lambda x: x.get_absolute_url(), product.image_set.all()),
             'number': product.number,
             'weight': '%g гр.' % product.weight,
@@ -290,9 +294,6 @@ class ProductSerializer(object):
             'materials': map(lambda x: x.name, product.materials.all()),
             'description': product.description,
             'items': ItemListSerializer().serialize(product.item_set.all()),
-            'yashare': {
-                'url': product.get_absolute_url()
-            }
         })
 
 class ItemListSerializer(object):
