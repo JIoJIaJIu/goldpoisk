@@ -11,7 +11,7 @@ from django.http import HttpResponse, Http404
 from django.db.models import Min, Max
 
 from goldpoisk import settings, js
-from goldpoisk.product.models import Item, Type, Product
+from goldpoisk.product.models import Item, Type, Product, get_filters
 from goldpoisk.templates import get_menu, get_with_active_menu
 
 logger = logging.getLogger('goldpoisk')
@@ -25,51 +25,22 @@ def category(req, category):
     products, count = Product.get_by_category(category, page, countPerPage)
 
     json_list_url = req.path + '/json'
-    #TODO: govnokot
-    if req.is_ajax():
-        res = HttpResponse(json.dumps({
-            'category': cat.name,
-            'count': count,
-            'products': json.loads(products),
-            'sortParams': [{
-                'name': 'По алфавиту',
-                'url': json_list_url + '?sort=name',
-            }, {
-                'name': 'Сначала дорогие',
-                'url': json_list_url + '?sort=tprice',
-            }, {
-                'name': 'Сначала дешёвые',
-                'url': json_list_url + '?sort=price',
-            }],
-            'paginator': {
-                'totalPages': math.ceil(count / countPerPage) or 1,
-                'currentPage': page,
-                'url': req.path,
-                'config': {
-                    'HTTP': {
-                        'list': json_list_url
-                    }
-                }
-            }
-        }))
-        return res
 
     context = {
-        'menu': JSArray(get_with_active_menu(category)),
+        'menu': get_with_active_menu(category),
         'category': cat.name,
         'count': count,
-        'products': js.eval(products),
-        #TODO:
-        'sortParams': JSArray([{
+        'products': json.loads(products),
+        'sortParams': [{
             'name': 'По алфавиту',
-            'url': json_list_url + '?sort=name',
+            'value': 'name'
         }, {
             'name': 'Сначала дорогие',
-            'url': json_list_url + '?sort=tprice',
+            'value': 'tprice'
         }, {
             'name': 'Сначала дешёвые',
-            'url': json_list_url + '?sort=price',
-        }]),
+            'value': 'price'
+        }],
         'paginator': {
             'totalPages': math.ceil(count / countPerPage) or 1,
             'currentPage': page,
@@ -79,11 +50,15 @@ def category(req, category):
                     'list': json_list_url
                 }
             }
-        }
+        },
+        "filters": get_filters(cat),
     }
 
+    if req.is_ajax():
+        return HttpResponse(json.dumps(context))
+
     c = time()
-    html = js.render(context, 'pages.category')
+    html = js.render(json.dumps(context), 'pages["category.json"]')
     logger.info('Rendered %fs' % (time() - c))
 
     res = HttpResponse(html)

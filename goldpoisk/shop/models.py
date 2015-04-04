@@ -16,6 +16,17 @@ class Shop(models.Model):
     def __unicode__(self):
         return self.name;
 
+    @classmethod
+    def get_types(cls, t):
+        shops = cls.objects.filter(item__product__type=t).distinct('name')
+        l = []
+        for shop in shops:
+            l.append({
+                'id': shop.pk,
+                'name': shop.name
+            })
+        return l
+
 class Admin(AbstractBaseUser):
     email = models.EmailField(_("Email"), max_length=128, unique=True)
 

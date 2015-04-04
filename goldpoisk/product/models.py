@@ -214,6 +214,17 @@ class Material(models.Model):
     def __unicode__(self):
         return self.name
 
+    @classmethod
+    def get_types(cls, t):
+        materials = cls.objects.filter(product__type=t).distinct('name')
+        l = []
+        for material in materials:
+            l.append({
+                'id': material.pk,
+                'name': material.name
+            })
+        return l
+
 class Gem(models.Model):
     name = models.CharField(max_length=128)
     carat = models.DecimalField(decimal_places=5, max_digits=8, blank=True)
@@ -222,6 +233,17 @@ class Gem(models.Model):
         if self.carat:
             return '%s %.3f' % (self.name, self.carat)
         return self.name
+
+    @classmethod
+    def get_types(cls, t):
+        gems = cls.objects.filter(product__type=t).distinct('name')
+        l = []
+        for gem in gems:
+            l.append({
+                'id': gem.pk,
+                'name': gem.name
+            })
+        return l
 
 class Image(models.Model):
     src = models.ImageField(upload_to=UPLOAD_TO['product'])
@@ -317,3 +339,55 @@ class GemListSerializer(object):
                 'carat': "%g" % gem.carat
             })
         return l
+
+class MaterialListSerializer(object):
+    def serialize(self, materials):
+        l = []
+        for gem in gems:
+            l.append({
+                'name': gem.name,
+                'carat': "%g" % gem.carat
+            })
+        return l
+
+def get_filters(category):
+    params = []
+    # Материалы
+    materials = Material.get_types(category)
+    count = len(materials)
+    if count:
+        params.append({
+            "title": "Материал",
+            "type": "list",
+            "count": count,
+            "state": "open",
+            "values": materials
+        })
+
+    # Камни
+    gems = Gem.get_types(category)
+    count = len(gems)
+    if count:
+        params.append({
+            "title": "Камни",
+            "type": "list",
+            "count": count,
+            "state": "open",
+            "values": gems
+        })
+
+    # Магазин
+    shopes = Shop.get_types(category)
+    count = len(shopes)
+    if count:
+        params.append({
+            "title": "Магазины",
+            "type": "list",
+            "count": count,
+            "state": "open",
+            "values": shopes
+        })
+
+    return {
+        "params": params
+    }
