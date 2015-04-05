@@ -22,12 +22,7 @@ def category(req, category):
 
     countPerPage = 30
     products, count = Product.get_by_category(category, page, countPerPage, sort=sort, filters=filters)
-
-    ctime = time()
-    json = js.render(products, "blocks['g-goods.str']", bemjson=True, env={'js': True})
-    logger.info('Rendered %gs' % (time() - ctime))
-
-    return HttpResponse(json, 'application/json')
+    return HttpResponse(products, 'application/json')
 
 def product(req, id):
     logger.debug('Request %s' % req.path)
