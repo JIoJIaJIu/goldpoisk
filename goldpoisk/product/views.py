@@ -11,6 +11,7 @@ from django.http import HttpResponse, Http404
 from django.db.models import Min, Max
 
 from goldpoisk import settings, js
+from goldpoisk.ajax.views import GET_int
 from goldpoisk.product.models import Item, Type, Product, get_filters
 from goldpoisk.templates import get_menu, get_with_active_menu
 
@@ -20,9 +21,14 @@ def category(req, category):
     logger.debug('Requestings category');
     cat = Type.objects.get(url=category)
     page = req.GET.get('page', 1)
+    filters = {
+        'gems': GET_int(req, 'gem'),
+        'shops': GET_int(req, 'store'),
+        'materials': GET_int(req, 'material'),
+    }
 
     countPerPage = 30
-    products, count = Product.get_by_category(category, page, countPerPage)
+    products, count = Product.get_by_category(category, page, countPerPage, filters=filters)
 
     json_list_url = req.path + '/json'
 

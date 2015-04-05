@@ -14,9 +14,14 @@ def category(req, category):
     logger.debug('Request %s' % req.path)
     page = req.GET.get('page', 1)
     sort = req.GET.get('sort', None)
+    filters = {
+        'gems': GET_int(req, 'gem'),
+        'shops': GET_int(req, 'store'),
+        'materials': GET_int(req, 'material'),
+    }
 
     countPerPage = 30
-    products, count = Product.get_by_category(category, page, countPerPage, sort=sort)
+    products, count = Product.get_by_category(category, page, countPerPage, sort=sort, filters=filters)
 
     ctime = time()
     json = js.render(products, "blocks['g-goods.str']", bemjson=True, env={'js': True})
@@ -42,3 +47,10 @@ def product(req, id):
     logger.info('Rendered %gs' % (time() - ctime))
 
     return HttpResponse(json, 'application/json')
+
+def GET_int(req, key):
+    param = req.GET.get(key, None)
+    if not param:
+        return None
+
+    return map(lambda x: int(x), param.split('.'))

@@ -75,9 +75,10 @@ class Product(models.Model):
         return '/id%d' % pk
 
     @classmethod
-    def get_by_category(cls, category, page=1, countPerPage=20, sort=None):
+    def get_by_category(cls, category, page=1, countPerPage=20, sort=None, filters=None):
         c = time()
         products = cls.objects.prefetch_related('image_set').filter(type__url__exact=category, item__isnull=False)
+        products = filtering(products, filters)
         products = products.annotate(count=Count('item'), min_cost=Min('item__cost'), max_cost=Max('item__cost'), carat=Max('gems__carat'))
         #TODO: optimize
         count = products.aggregate(count=Count('number'))['count']
@@ -100,6 +101,7 @@ class Product(models.Model):
             'weight',
             'min_cost',
             'max_cost',
+            'item__shop__id',
             'item__shop__name',
             'item__shop__url',
             'item__buy_url',
@@ -112,6 +114,11 @@ class Product(models.Model):
         #TODO: optimize
         s = set()
         products = [ p for p in products if not (p['pk'] in s or s.add(p['pk']))]
+
+        #TODO: Хуйняу
+        if filters and filters['shops']:
+            ids = filters['shops']
+            products = filter(lambda x: x['item__shop__id'] in ids, products)
 
         paginator = Paginator(products, countPerPage)
         print 'Request %fs' % (time() - c)
@@ -358,9 +365,8 @@ def get_filters(category):
     if count:
         params.append({
             "title": "Материал",
-            "type": "list",
+            "type": "material",
             "count": count,
-            "state": "open",
             "values": materials
         })
 
@@ -370,9 +376,8 @@ def get_filters(category):
     if count:
         params.append({
             "title": "Камни",
-            "type": "list",
+            "type": "gem",
             "count": count,
-            "state": "open",
             "values": gems
         })
 
@@ -382,12 +387,25 @@ def get_filters(category):
     if count:
         params.append({
             "title": "Магазины",
-            "type": "list",
+            "type": "store",
             "count": count,
-            "state": "open",
             "values": shopes
         })
 
     return {
         "params": params
-    }
+    } if len(params) else None
+
+def filtering(products, filters=None):
+    if not filters:
+        return products
+
+    gems = filters['gems']
+    if gems:
+        products = products.filter(gems__id__in=gems)
+
+    materials = filters['materials']
+    if materials:
+        products = products.filter(materials__id__in=materials)
+
+    return products
