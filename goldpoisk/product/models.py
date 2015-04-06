@@ -77,7 +77,7 @@ class Product(models.Model):
     @classmethod
     def get_by_category(cls, category, page=1, countPerPage=20, sort=None, filters=None):
         c = time()
-        products = cls.objects.prefetch_related('image_set').filter(type__url__exact=category, item__isnull=False)
+        products = cls.objects.prefetch_related('image_set').filter(type__url__exact=category, item__isnull=False).order_by('-id')
         products = filtering(products, filters)
         products = products.annotate(count=Count('item'), min_cost=Min('item__cost'), max_cost=Max('item__cost'), carat=Max('gems__carat'))
         #TODO: optimize
