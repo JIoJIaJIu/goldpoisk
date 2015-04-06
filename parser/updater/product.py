@@ -6,11 +6,11 @@ import django
 from django.core.exceptions import ObjectDoesNotExist
 
 from goldpoisk.product.models import Product as model, Material, Gem, Image, Type, Shop, Item
+from updater.config import SHOP_ID
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "goldpoisk.settings")
 django.setup()
 
-SHOP_ID = 2
 
 class Product(object):
     def __init__(self, number, type_id, level=0):
@@ -48,7 +48,7 @@ class Product(object):
 
         materials = data.get('material', '').split(',')
         for material in materials:
-            m = self.get_material(material.capitalize())
+            m = self.get_material(material.strip().capitalize())
             if not m in product.materials.all():
                 self.logger.debug('Material: %s' % m.name)
                 product.materials.add(m)
@@ -66,7 +66,7 @@ class Product(object):
                 update = True
 
         assert(data['url'])
-        if self.set_item(data['url'], product):
+        if self.set_item(data['url'], data['price'], product):
             update = True
 
         if not update:
@@ -101,7 +101,7 @@ class Product(object):
             image.save()
             return True
 
-    def set_item(self, url, product):
+    def set_item(self, url, price, product):
         try:
             Item.objects.get(shop=self.shop, product=product)
             return False
@@ -109,7 +109,7 @@ class Product(object):
             self.logger.debug('Item: %s' % url)
             #TODO:
             item = Item.objects.create(**{
-                'cost': 1000,
+                'cost': price,
                 'quantity': 1,
                 'product': product,
                 'shop': self.shop,
@@ -126,19 +126,18 @@ class Product(object):
             raise Exception('Object exists', data['number'])
 
         assert data['name']
-        assert data['weight']
 
         product = model.objects.create(**{
             'type': self.type,
             'name': data['name'],
             'number': data['number'],
-            'description': data.get('description', 'Отстуствует'),
+            'description': data.get('description') or '',
             'weight': data['weight'],
         })
 
         materials = data.get('material', '').split(',')
         for material in materials:
-            m = self.get_material(material.capitalize())
+            m = self.get_material(material.strip().capitalize())
             self.logger.debug('Material: %s' % m.name)
             product.materials.add(m)
 
@@ -151,7 +150,7 @@ class Product(object):
             self.set_image(src, product)
 
         assert(data['url'])
-        self.set_item(data['url'], product)
+        self.set_item(data['url'], data['price'], product)
 
 
     #HACK

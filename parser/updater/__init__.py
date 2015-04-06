@@ -7,9 +7,7 @@ import MySQLdb as mdb
 import psycopg2
 
 from updater.product import Product
-
-TYPE_ID = 1
-SHOP_ID = 1
+from updater.config import TYPE_ID, SHOP_ID
 
 MYSQL_HOST = 'localhost'
 MYSQL_USER_NAME = 'dev_goldpoisk'
@@ -19,6 +17,20 @@ MYSQL_DATABASE = 'goldpoisk_dump'
 POSTGRES_DATABASE = 'dev_goldpoisk'
 POSTGRES_USER = 'dev_goldpoisk'
 POSTGRES_PASSWORD = 'dev12345'
+
+class Row(object):
+    def __init__(self, row, keys):
+        self.row = row
+        self.keys = keys
+
+    def __getattr__(self, key):
+        i = self.keys.index(key)
+        data = self.row[i]
+        if key == 'price' and data:
+            data = re.sub(r'[^\d]', '', data)
+
+        return data
+
 
 class Updater(object):
     def __init__(self):
@@ -31,7 +43,7 @@ class Updater(object):
         print "Entering.."
         current_time = time.time()
         sql = """
-        SELECT article, name, material, weight, url
+        SELECT *
         FROM goldpoisk_entity as entity
         """
         cursor = self.mysql.cursor()
@@ -40,7 +52,7 @@ class Updater(object):
         cursor.close()
         print "\tSpended time %fs" % (time.time() -  current_time)
         print "\tRows: %d" % len(rows)
-        self.rows = self.convert(rows)
+        self.rows = self.convert(cursor.description, rows)
         return self
 
     def create_products(self):
@@ -238,23 +250,31 @@ class Updater(object):
         cursor.close()
         return item
 
-    def convert(self, rows):
+    def convert(self, description, rows):
         d = []
-        #SELECT entity.article, name, material, weight, url, src
+        collumns = [q[0].decode('utf-8') for q in description]
+        print '>>>', collumns, description
+
         for row in rows:
-            name = row[1].replace('тов', '')
+            row = Row(row, collumns)
+            name = row.name.replace('тов', '')
             name = name.decode('utf-8').strip()
+            price = row.price
 
             #TODO:
             weight_reg = re.compile(r'\d+(\.\d+)?')
-            weight = decimal.Decimal(weight_reg.search(row[3]).group(0))
+            weight = 0
+            if weight_reg.search(row.weight):
+                weight = decimal.Decimal(weight_reg.search(row.weight).group(0))
 
             d.append({
-                'number': row[0],
+                'number': row.article,
+                'description': row.description.decode('utf-8'),
+                'price': price or 0,
                 'name': name,
-                'material': row[2],
+                'material': row.material or '',
                 'weight': weight,
-                'url': row[4]
+                'url': row.url
             })
         return d
 
