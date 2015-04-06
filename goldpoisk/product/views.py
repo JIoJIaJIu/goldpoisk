@@ -12,7 +12,7 @@ from django.db.models import Min, Max
 
 from goldpoisk import settings, js
 from goldpoisk.ajax.views import GET_int
-from goldpoisk.product.models import Item, Type, Product, get_filters
+from goldpoisk.product.models import Item, Type, Product, get_filters, ProductSerializer
 from goldpoisk.templates import get_menu, get_with_active_menu
 
 logger = logging.getLogger('goldpoisk')
@@ -107,7 +107,9 @@ def product(req, id):
     if not len(items):
         raise Http404
 
-    images = product.image_set.all()
+    if (req.is_ajax()):
+        product = ProductSerializer().serialize(product)
+        return HttpResponse(product, 'application/json')
 
     context = {
         'menu': JSArray(get_menu()),
