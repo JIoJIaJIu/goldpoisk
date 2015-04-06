@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+import json
 import logging
 from time import time
 
@@ -22,6 +23,10 @@ def category(req, category):
 
     countPerPage = 30
     products, count = Product.get_by_category(category, page, countPerPage, sort=sort, filters=filters)
+    products = json.dumps({
+        'list': json.loads(products),
+        'count': count,
+    })
     return HttpResponse(products, 'application/json')
 
 def product(req, id):

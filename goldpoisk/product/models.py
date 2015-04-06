@@ -77,11 +77,9 @@ class Product(models.Model):
     @classmethod
     def get_by_category(cls, category, page=1, countPerPage=20, sort=None, filters=None):
         c = time()
-        products = cls.objects.prefetch_related('image_set').filter(type__url__exact=category, item__isnull=False).order_by('-id')
+        products = cls.objects.prefetch_related('image_set').filter(type__url__exact=category, item__isnull=False)
         products = filtering(products, filters)
         products = products.annotate(count=Count('item'), min_cost=Min('item__cost'), max_cost=Max('item__cost'), carat=Max('gems__carat'))
-        #TODO: optimize
-        count = products.aggregate(count=Count('number'))['count']
         if sort:
             key = {
                 'price': lambda: products.order_by('min_cost'),
@@ -126,6 +124,12 @@ class Product(models.Model):
         c = time()
         json = ProductListSerializer().serialize(paginator.page(page).object_list)
         print 'Serializer %fs' % (time() - c)
+
+        #TODO: optimize
+        print 'Counting'
+        c = time()
+        count = len(products)
+        print 'Counting end %fs' % (time() - c)
 
         return json, count
 
