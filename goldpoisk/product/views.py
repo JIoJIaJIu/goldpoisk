@@ -13,7 +13,7 @@ from django.db.models import Min, Max
 from goldpoisk import settings, js
 from goldpoisk.ajax.views import GET_int
 from goldpoisk.product.models import Item, Type, Product, get_filters, ProductSerializer
-from goldpoisk.templates import get_menu, get_with_active_menu
+from goldpoisk.templates import get_menu, get_with_active_menu, get_env
 
 logger = logging.getLogger('goldpoisk')
 
@@ -64,7 +64,7 @@ def category(req, category):
         return HttpResponse(json.dumps(context))
 
     c = time()
-    html = js.render(json.dumps(context), 'pages["category.json"]')
+    html = js.render(json.dumps(context), 'pages["category.json"]', env=get_env())
     logger.info('Rendered %fs' % (time() - c))
 
     res = HttpResponse(html)
@@ -93,7 +93,7 @@ def best(req):
         }
     }
 
-    html = js.render(context, 'pages.category')
+    html = js.render(context, 'pages.category', env=get_env())
     res = HttpResponse(html);
     return res
 
@@ -116,5 +116,5 @@ def product(req, id):
         'item': product.json(),
     }
 
-    html = js.render(context, 'pages["item.json"]')
+    html = js.render(context, 'pages["item.json"]', env=get_env())
     return HttpResponse(html)

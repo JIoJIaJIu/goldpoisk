@@ -11,7 +11,7 @@ from PyV8 import JSArray
 from django.http import HttpResponse
 
 from goldpoisk import js
-from goldpoisk.templates import get_menu
+from goldpoisk.templates import get_menu, get_env
 from goldpoisk.product.models import Product
 
 logger = logging.getLogger('goldpoisk')
@@ -45,7 +45,7 @@ def main(req):
     logger.info('Generating context: %gs' % (time() - ctime))
 
     ctime = time()
-    html = js.render(context, 'pages.index')
+    html = js.render(context, 'pages.index', env=get_env())
     logger.info('Render: %gs' % (time() - ctime))
 
     res = HttpResponse(html);

@@ -30,3 +30,8 @@ def map_menu(item):
         'type': item.type,
         'label': item.name
     }
+
+def get_env():
+    return {
+        'production': settings.DEBUG == False
+    }
