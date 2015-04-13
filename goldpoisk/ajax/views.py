@@ -29,10 +29,10 @@ def category(req, category):
     })
     return HttpResponse(products, 'application/json')
 
-def product(req, id):
+def product(req, slug):
     logger.debug('Request %s' % req.path)
     try:
-        product = Product.objects.prefetch_related('item_set').get(pk=id)
+        product = Product.objects.prefetch_related('item_set').get(slug__exact=slug)
     except Product.DoesNotExist:
         return HttpResponse('{}', 'application/json')
 

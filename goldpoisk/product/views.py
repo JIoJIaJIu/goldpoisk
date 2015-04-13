@@ -98,9 +98,9 @@ def best(req):
     res = HttpResponse(html);
     return res
 
-def product(req, id):
+def product(req, slug):
     try:
-        product = Product.objects.prefetch_related('item_set').get(pk=id)
+        product = Product.objects.prefetch_related('item_set').get(slug__exact=slug)
     except Product.DoesNotExist:
         raise Http404
 

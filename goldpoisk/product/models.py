@@ -22,6 +22,7 @@ class Product(models.Model):
     type = models.ForeignKey('Type', verbose_name=_('Type'))
     name = models.CharField(_('Name'), max_length=128)
     description = models.TextField(_('Description'), blank=True)
+    slug = models.SlugField(unique=True)
 
     number = models.CharField(max_length=32)
     materials = models.ManyToManyField('Material', verbose_name=_('Materials'))
@@ -68,11 +69,11 @@ class Product(models.Model):
         return features
 
     def get_absolute_url(self):
-        return '/id%d' % self.pk
+        return '/item/%s' % self.slug
 
     @classmethod
-    def _get_absolute_url(cls, pk):
-        return '/id%d' % pk
+    def _get_absolute_url(cls, slug):
+        return '/item/%s' % slug
 
     @classmethod
     def get_by_category(cls, category, page=1, countPerPage=20, sort=None, filters=None):
@@ -92,6 +93,7 @@ class Product(models.Model):
         #TODO:
         products = products.values(
             'pk',
+            'slug',
             'name',
             'count',
             'number',
@@ -295,7 +297,7 @@ class ProductListSerializer(object):
             else:
                 carat = None
 
-            url = Product._get_absolute_url(p['pk'])
+            url = Product._get_absolute_url(p['slug'])
             l.append({
                 'title': p['name'],
                 'count': p['count'],
