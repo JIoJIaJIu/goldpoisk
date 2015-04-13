@@ -7,6 +7,7 @@ import os
 from PyV8 import JSArray
 from time import time
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, Http404
 from django.db.models import Min, Max
 
@@ -118,3 +119,17 @@ def product(req, id):
 
     html = js.render(context, 'pages["item.json"]', env=get_env())
     return HttpResponse(html)
+
+def search(req):
+    if not req.is_ajax():
+        raise Http404
+
+    number = req.GET.get('article', None)
+    if not number:
+        return HttpResponse('Should point article', status=403, content_type="application/json")
+
+    try:
+        product = Product.objects.get(number=number)
+        return HttpResponse(product.json())
+    except ObjectDoesNotExist:
+        return HttpResponse('%s: no such product' % number, status=404, content_type="application/json")
