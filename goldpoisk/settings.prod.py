@@ -64,7 +64,7 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = 'static/'
+STATIC_ROOT = '/home/guro/webapps/goldpoisk/myproject/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -169,13 +169,13 @@ LOGGING = {
         'common': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': './logs/common.log',
+            'filename': '/home/guro/webapps/goldpoisk/logs/common.log',
             'formatter': 'verbose',
         },
         'goldpoisk': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': './logs/goldpoisk.log',
+            'filename': '/home/guro/webapps/goldpoisk/logs/goldpoisk.log',
             'formatter': 'verbose',
         },
     },

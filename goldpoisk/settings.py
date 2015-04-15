@@ -174,13 +174,13 @@ LOGGING = {
         'common': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': './logs/common.log',
+            'filename': '/home/jiojiajiu/workspace/goldpoisk/server/logs/common.log',
             'formatter': 'verbose',
         },
         'goldpoisk': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': './logs/goldpoisk.log',
+            'filename': '/home/jiojiajiu/workspace/goldpoisk/server/logs/goldpoisk.log',
             'formatter': 'verbose',
         },
     },
