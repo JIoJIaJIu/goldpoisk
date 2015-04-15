@@ -24,7 +24,7 @@ def generate_sitemap():
     generate_items_sitemap()
 
     f = open('sitemap.xml', 'w')
-    xml.write(f, encoding='utf8', xml_declaration=True, method='html')
+    xml.write(f, encoding='utf8', xml_declaration=True)
 
 def generate_category_sitemap():
     countPerPage = 30

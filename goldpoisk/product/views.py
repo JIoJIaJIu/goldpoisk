@@ -49,7 +49,7 @@ def category(req, category):
             'value': 'price'
         }],
         'paginator': {
-            'totalPages': math.ceil(count / countPerPage) or 1,
+            'totalPages': math.ceil(float(count) / countPerPage) or 1,
             'currentPage': page,
             'url': req.path,
             'config': {
@@ -83,7 +83,7 @@ def best(req):
         'count': count,
         'products': js.eval(products),
         'paginator': {
-            'totalPages': math.ceil(count / countPerPage) or 1,
+            'totalPages': math.ceil(float(count) / countPerPage) or 1,
             'currentPage': page,
             'url': req.path,
             'config': {
