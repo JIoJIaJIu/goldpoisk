@@ -7,6 +7,7 @@ urlpatterns = patterns('goldpoisk.product.views',
     url(get_menu_regexp(), 'category'),
     url(get_menu_regexp('/json'), ajax_views.category),
     url('^search$', 'search'),
+    url(r'^products/json', 'products'),
     url(r'^item/(?P<slug>[\w\d-]+)$', 'product'),
     url(r'^item/(?P<slug>[\w\d-]+)/json$', ajax_views.product),
 )

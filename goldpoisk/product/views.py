@@ -13,7 +13,8 @@ from django.db.models import Min, Max
 
 from goldpoisk import settings, js
 from goldpoisk.ajax.views import GET_int
-from goldpoisk.product.models import Item, Type, Product, get_filters, ProductSerializer
+from goldpoisk.product.models import Item, Type, Product, get_filters
+from goldpoisk.product.models import ProductSerializer
 from goldpoisk.templates import get_menu, get_with_active_menu, get_env
 
 logger = logging.getLogger('goldpoisk')
@@ -119,6 +120,42 @@ def product(req, slug):
 
     html = js.render(context, 'pages["item.json"]', env=get_env())
     return HttpResponse(html)
+
+def products(req):
+    if not req.is_ajax():
+        raise Http404
+
+    ids = req.GET.get('ids', "").split('.')
+    try:
+        print ids, req.GET
+        ids = map(lambda x: x and int(x), ids)
+    except:
+        return HttpResponse('Wrong parameter %s' % ids, status=404, content_type="application/json")
+
+    products = Product.objects.filter(id__in=ids)
+
+    #TODO
+    l = []
+    for i in products:
+        product = json.loads(ProductSerializer().serialize(i))
+        item = i.item_set.first()
+        product.update({
+            'jsonUrl': i.get_absolute_url() + '/json',
+            'shopName': item.shop.name,
+            'shopUrl': item.shop.url,
+            'buyUrl': item.buy_url,
+            'minPrice': item.cost,
+            'carat': i.get_carat(),
+            'image': i.image_set.first().get_absolute_url(),
+            'count': 1
+        })
+        l.append(product)
+
+    dump = json.dumps({
+        'count': len(products),
+        'list': l,
+    })
+    return HttpResponse(dump, content_type="application/json")
 
 def search(req):
     if not req.is_ajax():

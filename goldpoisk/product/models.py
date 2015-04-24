@@ -155,6 +155,7 @@ class Product(models.Model):
 
             url = item.product.get_absolute_url();
             data = {
+                'id': item.product.pk,
                 'title': item.product.name,
                 'count': 1,
                 'image': item.product.image_set.first().get_absolute_url(),
@@ -300,6 +301,7 @@ class ProductListSerializer(object):
             url = Product._get_absolute_url(p['slug'])
             l.append({
                 'title': p['name'],
+                'id': p['pk'],
                 'count': p['count'],
                 'image': Image._get_absolute_url(p['image__src']),
                 'url': url,
@@ -320,6 +322,7 @@ class ProductListSerializer(object):
 class ProductSerializer(object):
     def serialize(self, product):
         return json.dumps({
+            'id': product.pk,
             'title': product.name,
             'url': product.get_absolute_url(),
             'images': map(lambda x: x.get_absolute_url(), product.image_set.all()),
