@@ -42,11 +42,7 @@ def product(req, slug):
     logger.debug('Serialize')
     product = ProductSerializer().serialize(product)
 
-    ctime = time()
-    json = js.render(product, "blocks['g-item.str']", bemjson=True, env={'js': True})
-    logger.info('Rendered %gs' % (time() - ctime))
-
-    return HttpResponse(json, 'application/json')
+    return HttpResponse(product, 'application/json')
 
 def GET_int(req, key):
     param = req.GET.get(key, None)
