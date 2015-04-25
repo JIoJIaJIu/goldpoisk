@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'goldpoisk',
+    'goldpoisk.cms',
     'goldpoisk.ajax',
     'goldpoisk.product',
     'goldpoisk.shop',
@@ -140,6 +141,7 @@ INSTALLED_APPS = (
 
 UPLOAD_TO = {
     'product': 'product'
+    'promotion': 'promotion',
 }
 
 # A sample logging configuration. The only tangible logging
