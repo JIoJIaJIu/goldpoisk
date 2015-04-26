@@ -49,4 +49,10 @@ def GET_int(req, key):
     if not param:
         return None
 
-    return map(lambda x: int(x), param.split('.'))
+    def to_int(val):
+        try:
+            return int(val)
+        except:
+            pass
+
+    return map(to_int, param.split('.'))

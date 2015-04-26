@@ -125,13 +125,7 @@ def products(req):
     if not req.is_ajax():
         raise Http404
 
-    ids = req.GET.get('ids', "").split('.')
-    try:
-        print ids, req.GET
-        ids = map(lambda x: x and int(x), ids)
-    except:
-        return HttpResponse('Wrong parameter %s' % ids, status=404, content_type="application/json")
-
+    ids = GET_int(req, 'ids')
     products = Product.objects.filter(id__in=ids)
 
     #TODO
