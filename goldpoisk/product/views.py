@@ -63,7 +63,7 @@ def category(req, category):
     }
 
     if req.is_ajax():
-        return HttpResponse(json.dumps(context))
+        return HttpResponse(json.dumps(context), content_type="application/json")
 
     c = time()
     html = js.render(json.dumps(context), 'pages["category.json"]', env=get_env())
@@ -126,6 +126,7 @@ def products(req):
         raise Http404
 
     ids = GET_int(req, 'ids')
+    ids.reverse()
     products = Product.objects.filter(id__in=ids)
 
     #TODO
