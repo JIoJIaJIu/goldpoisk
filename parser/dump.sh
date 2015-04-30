@@ -62,7 +62,7 @@ function add_dump_on_server {
 function upload_dump {
     echo "Uploading dump"
     set -x
-    rsync --progress -v $DUMP webfaction:goldpoisk/dumps/$DUMP
+    rsync --progress -v $DUMP webfaction:goldpoisk/dumps/${DUMP##*/}
     set +x
 }
 
@@ -87,4 +87,5 @@ for i in $@; do
             show_help
             ;;
     esac
+    exit 0
 done
