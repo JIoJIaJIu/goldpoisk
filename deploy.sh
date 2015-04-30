@@ -27,6 +27,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+echo 'Generate sitemap.xml'
+python utils/sitemap.py
+mv sitemap.xml static/
+
 echo 'Migrations..'
 echo 'Copy migration goldpoisk'
 cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/migrations myproject/goldpoisk/
@@ -34,6 +38,8 @@ echo 'Copy migration product..'
 cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/product/migrations myproject/goldpoisk/product/
 echo 'Copy migration shop'
 cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/shop/migrations myproject/goldpoisk/shop/
+echo 'Copy migration cms'
+cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/cms/migrations myproject/goldpoisk/cms/
 sleep 1
 
 rm backend.zip
