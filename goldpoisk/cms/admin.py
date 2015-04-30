@@ -4,6 +4,7 @@ from goldpoisk.cms.models import Banner, Promotion
 
 class PromotionInline(admin.StackedInline):
     model = Promotion
+    raw_id_fields = ('item',)
 
 class BannerAdmin(admin.ModelAdmin):
     inlines = [
@@ -11,4 +12,3 @@ class BannerAdmin(admin.ModelAdmin):
     ]
 
 admin.site.register(Banner, BannerAdmin)
-admin.site.register(Promotion)

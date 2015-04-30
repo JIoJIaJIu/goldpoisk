@@ -22,7 +22,7 @@ def main(req):
     logger.debug('Requesting main')
 
     products, count = Product.get_bids(1, 5)
-    promo = Banner.objects.all()
+    promo = Banner.objects.filter(hidden=False)
     if req.is_ajax():
         return HttpResponse(json.dumps({
             'promo': map(BannerSerializer().normalize, promo),
