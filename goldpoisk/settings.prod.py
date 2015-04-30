@@ -140,7 +140,7 @@ INSTALLED_APPS = (
 )
 
 UPLOAD_TO = {
-    'product': 'product'
+    'product': 'product',
     'promotion': 'promotion',
 }
 
