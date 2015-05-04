@@ -5,7 +5,7 @@ from PyV8 import JSArray
 from time import time
 
 from django.db import models
-from django.db.models import Min, Max, Count
+from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
@@ -16,9 +16,13 @@ from django.core.paginator import Paginator
 from goldpoisk.settings import MEDIA_URL, UPLOAD_TO
 from goldpoisk.shop.models import Shop
 from goldpoisk.models import BestBid
+from goldpoisk.product import managers
 from goldpoisk import js
 
 class Product(models.Model):
+    objects = models.Manager()
+    customs = managers.ProductManager()
+
     type = models.ForeignKey('Type', verbose_name=_('Type'))
     name = models.CharField(_('Name'), max_length=128)
     description = models.TextField(_('Description'), blank=True)
@@ -74,66 +78,6 @@ class Product(models.Model):
     @classmethod
     def _get_absolute_url(cls, slug):
         return '/item/%s' % slug
-
-    @classmethod
-    def get_by_category(cls, category, page=1, countPerPage=20, sort=None, filters=None):
-        c = time()
-        products = cls.objects.prefetch_related('image_set').filter(type__url__exact=category, item__isnull=False)
-        products = filtering(products, filters)
-        products = products.annotate(count=Count('item'), min_cost=Min('item__cost'), max_cost=Max('item__cost'), carat=Max('gems__carat'))
-        if sort:
-            key = {
-                'price': lambda: products.order_by('min_cost'),
-                'tprice': lambda: products.order_by('-max_cost'),
-                'name': lambda: products.order_by('name'),
-            }[sort]
-            if key:
-                products = key()
-
-        #TODO:
-        products = products.values(
-            'pk',
-            'slug',
-            'name',
-            'count',
-            'number',
-            'description',
-            'weight',
-            'min_cost',
-            'max_cost',
-            'item__shop__id',
-            'item__shop__name',
-            'item__shop__url',
-            'item__buy_url',
-            'image__src',
-            'item__action',
-            'item__hit',
-            'carat',
-        )
-
-        #TODO: optimize
-        s = set()
-        products = [ p for p in products if not (p['pk'] in s or s.add(p['pk']))]
-
-        #TODO: Хуйняу
-        if filters and filters['shops']:
-            ids = filters['shops']
-            products = filter(lambda x: x['item__shop__id'] in ids, products)
-
-        paginator = Paginator(products, countPerPage)
-        print 'Request %fs' % (time() - c)
-
-        c = time()
-        json = ProductListSerializer().serialize(paginator.page(page).object_list)
-        print 'Serializer %fs' % (time() - c)
-
-        #TODO: optimize
-        print 'Counting'
-        c = time()
-        count = len(products)
-        print 'Counting end %fs' % (time() - c)
-
-        return json, count
 
     #TODO: hardcode motherfucker
     @classmethod
@@ -268,7 +212,7 @@ class Image(models.Model):
 
     @classmethod
     def _get_absolute_url(cls, src):
-        return '/media/%s' % src 
+        return '/media/%s' % src
 
 def mapProduct(product):
     images = product.image_set

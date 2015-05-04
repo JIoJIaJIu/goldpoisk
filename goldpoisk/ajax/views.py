@@ -6,28 +6,10 @@ from time import time
 from django.shortcuts import render
 from django.http import HttpResponse
 
-from goldpoisk.product.models import Type, Product, ProductSerializer
+from goldpoisk.product.models import Product, ProductSerializer
 from goldpoisk import js
 
 logger = logging.getLogger('goldpoisk')
-
-def category(req, category):
-    logger.debug('Request %s' % req.path)
-    page = req.GET.get('page', 1)
-    sort = req.GET.get('sort', None)
-    filters = {
-        'gems': GET_int(req, 'gem'),
-        'shops': GET_int(req, 'store'),
-        'materials': GET_int(req, 'material'),
-    }
-
-    countPerPage = 30
-    products, count = Product.get_by_category(category, page, countPerPage, sort=sort, filters=filters)
-    products = json.dumps({
-        'list': json.loads(products),
-        'count': count,
-    })
-    return HttpResponse(products, 'application/json')
 
 def product(req, slug):
     logger.debug('Request %s' % req.path)

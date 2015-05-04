@@ -8,10 +8,13 @@ from PyV8 import JSArray
 from time import time
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage
 from django.http import HttpResponse, Http404
 from django.db.models import Min, Max
 
 from goldpoisk import settings, js
+from goldpoisk.utils import to_int, to_string
+from goldpoisk.serializer import CustomsProductSerializer
 from goldpoisk.ajax.views import GET_int
 from goldpoisk.product.models import Item, Type, Product, get_filters
 from goldpoisk.product.models import ProductSerializer
@@ -19,26 +22,40 @@ from goldpoisk.templates import get_menu, get_with_active_menu, get_env
 
 logger = logging.getLogger('goldpoisk')
 
+"""
+Controller on requesting through raw GET request category
+Also it works for AJAX requests
+"""
 def category(req, category):
-    logger.debug('Requestings category');
+    logger.debug('Requestings category %s' % req.path);
     cat = Type.objects.get(url=category)
-    page = req.GET.get('page', 1)
+    page_number = to_int(req.GET.get('page'), 1)
+    sort_key = to_string(req.GET.get('sort'), None)
+
     filters = {
         'gems': GET_int(req, 'gem'),
         'shops': GET_int(req, 'store'),
         'materials': GET_int(req, 'material'),
     }
 
-    countPerPage = 30
-    products, count = Product.get_by_category(category, page, countPerPage, filters=filters)
+    products = Product.customs.filter(type__url__exact=category)
+    products = products.filter_by_gems(filters['gems'])\
+                       .filter_by_shops(filters['shops'])\
+                       .filter_by_materials(filters['materials'])\
+                       .sort(sort_key)
 
-    json_list_url = req.path + '/json'
+    paginator = Paginator(products, 30)
+    try:
+        page = paginator.page(page_number)
+    except EmptyPage:
+        page = paginator.page(1)
+    serializer = CustomsProductSerializer()
 
     context = {
         'menu': get_with_active_menu(category),
         'category': cat.name,
-        'count': count,
-        'products': json.loads(products),
+        'count': paginator.count,
+        'products': map(lambda p: serializer.normalize(p), page.object_list),
         'sortParams': [{
             'name': 'По алфавиту',
             'value': 'name'
@@ -50,12 +67,12 @@ def category(req, category):
             'value': 'price'
         }],
         'paginator': {
-            'totalPages': math.ceil(float(count) / countPerPage) or 1,
-            'currentPage': page,
+            'totalPages': paginator.num_pages,
+            'currentPage': page.number,
             'url': req.path,
             'config': {
                 'HTTP': {
-                    'list': json_list_url
+                    'list': req.path + '/json'
                 }
             }
         },
@@ -72,9 +89,50 @@ def category(req, category):
     res = HttpResponse(html)
     return res
 
+"""
+Controller that works only through AJAX
+For sorting
+"""
+def sort(req, category):
+    logger.debug('Request sorting %s' % req.path)
+    if not req.is_ajax():
+        raise Http404
+
+    page_number = to_int(req.GET.get('page'), 1)
+    sort_key = to_string(req.GET.get('sort'), None)
+
+    filters = {
+        'gems': GET_int(req, 'gem'),
+        'shops': GET_int(req, 'store'),
+        'materials': GET_int(req, 'material'),
+    }
+
+    products = Product.customs.filter(type__url__exact=category)
+    products = products.filter_by_gems(filters['gems'])\
+                       .filter_by_shops(filters['shops'])\
+                       .filter_by_materials(filters['materials'])\
+                       .sort(sort_key)
+
+    paginator = Paginator(products, 30)
+    try:
+        page = paginator.page(page_number)
+    except:
+        page = paginator.page(1)
+    serializer = CustomsProductSerializer()
+
+    products = json.dumps({
+        'list': map(lambda x: serializer.normalize(x), page.object_list),
+        'count': paginator.count,
+    })
+    return HttpResponse(products, 'application/json')
+
+"""
+Controller that works only through plain GET request
+Return bids page
+"""
 def best(req):
     logger.debug('Requesting best');
-    page = req.GET.get('page', 1)
+    page = to_int(req.GET.get('page'), 1)
 
     countPerPage = 30
     products, count = Product.get_bids(page, countPerPage)

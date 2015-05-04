@@ -5,7 +5,7 @@ from goldpoisk.templates import get_menu_regexp
 
 urlpatterns = patterns('goldpoisk.product.views',
     url(get_menu_regexp(), 'category'),
-    url(get_menu_regexp('/json'), ajax_views.category),
+    url(get_menu_regexp('/json'), 'sort'),
     url('^search$', 'search'),
     url(r'^products/json', 'products'),
     url(r'^item/(?P<slug>[\w\d-]+)$', 'product'),
