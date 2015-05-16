@@ -6,42 +6,40 @@ import django
 from django.core.exceptions import ObjectDoesNotExist
 
 from goldpoisk.product.models import Product as model, Material, Gem, Image, Type, Shop, Item
-from updater.config import SHOP_ID
+from . import config
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "goldpoisk.settings")
 django.setup()
 
-
 class Product(object):
-    def __init__(self, number, type_id, level=0):
+    def __init__(self, number, type_id, shop_id):
         try:
             self.me = model.objects.get(number=number)
         except ObjectDoesNotExist as e:
             self.me = None
 
         self.type = Type.objects.get(pk=type_id)
-        self.shop = Shop.objects.get(pk=SHOP_ID)
+        self.shop = Shop.objects.get(pk=shop_id)
         self.logger = Logger('Product')
-        self.logger.setLevel(level)
+        self.logger.setLevel(config.LOG_LEVEL)
         self.logger.addHandler(StreamHandler())
 
     def update(self, data):
-        self.logger.info('Updating %d %s' % (self.me.pk, self.me.number))
+        self.logger.info('Updating pk: %d number: %s' % (self.me.pk, self.me.number))
         product = self.me
         update = False
 
-        if product.name != data['name']:
-            #raise Exception(product.name, ':', data['name'])
-            self.logger.error('Name:\n %s\n %s' % (product.name, data['name']))
+        name = data.get('name', None)
+        if name and product.name != name:
+            self.logger.error('Name:\n %s\n %s' % (product.name, name))
 
         desc = data.get('description', None)
-        if not self.match(product.description, desc):
+        if desc and not self.match(product.description, desc):
             self.logger.debug('Desc:\n %s\n %s' % (product.description, desc))
             product.description = desc
             update = True
 
         weight = data.get('weight', None)
-        if not self.match(product.weight, weight):
+        if weight and not self.match(product.weight, weight):
             self.logger.debug('Weight:\n %d\n %d' % (product.weight, weight))
             product.weight = weight
             update = True
@@ -65,9 +63,23 @@ class Product(object):
             if self.set_image(src, product):
                 update = True
 
-        assert(data['url'])
-        if self.set_item(data['url'], data['price'], product):
-            update = True
+        try:
+            item = Item.objects.get(shop=self.shop, product=product)
+            price = int(data.get('price', 0))
+            if price and item.cost != price:
+                item.cost = price
+                item.save()
+                self.logger.info("Item price: %s", price)
+
+            count = int(data.get('count', 0))
+            if count != item.quantity:
+                item.quantity = count
+                item.save()
+                self.logger.info("Item count: %s", count)
+        except ObjectDoesNotExist:
+            assert(data['url'])
+            if self.set_item(data['url'], data['price'], product):
+                update = True
 
         if not update:
             self.logger.info('No update')
