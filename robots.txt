@@ -1,0 +1,3 @@
+User-agent: *
+Host: goldpoisk.ru
+Sitemap: http://goldpoisk.ru/sitemap.xml

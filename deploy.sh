@@ -29,7 +29,10 @@ fi
 
 echo 'Generate sitemap.xml'
 python utils/sitemap.py
-mv sitemap.xml static/
+mv -v sitemap.xml static/
+
+echo 'Moving robots.txt'
+mv -v robots.txt static/
 
 echo 'Migrations..'
 echo 'Copy migration goldpoisk'
