@@ -1,6 +1,7 @@
 # *- coding: utf-8 -*-
 from datetime import datetime
 import django
+from django.core.paginator import Paginator
 import math
 from urlparse import urljoin
 import xml.etree.ElementTree as ET
@@ -30,12 +31,17 @@ def generate_category_sitemap():
     countPerPage = 30
 
     for category in get_menu():
-        append_node(category['href'], NOW, 0.5)
-        products, count = Product.get_by_category(category['href'], 1, countPerPage)
-        totalPages = int(math.ceil(float(count) / countPerPage)) or 1
-        print "%s: %d pages" % (category['href'], totalPages)
-        for i in range(2, totalPages + 1):
-            path = urljoin(category['href'], '?page=%d' % i)
+        categoryUrl = category['href']
+        append_node(categoryUrl, NOW, 0.5)
+        products = Product.customs.filter(type__url__exact=categoryUrl)
+        paginator = Paginator(products, 30)
+        print "%s: %d pages" % (categoryUrl, paginator.num_pages)
+
+        page = paginator.page(1)
+        path = urljoin(categoryUrl, '?page=%d' % page.number)
+        while page.has_next():
+            page = paginator.page(page.next_page_number())
+            path = urljoin(categoryUrl, '?page=%d' % page.number)
             append_node(path, NOW, 0.4)
 
 def generate_items_sitemap():
