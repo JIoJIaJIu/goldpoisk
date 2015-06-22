@@ -362,3 +362,11 @@ def filtering(products, filters=None):
         products = products.filter(materials__id__in=materials)
 
     return products
+
+def generate_title(product):
+    return u"Купить %s" % product.name.lower()
+
+def  generate_description(product):
+    return u"Предлагаем не только %s, " % generate_title(product).lower() + \
+        u"но и взглянуть на все %s, которые у нас есть. "  % product.type.name.lower() + \
+        u"Отсортируйте по цене для поиска более выгодного предложения."

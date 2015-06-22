@@ -18,6 +18,7 @@ from goldpoisk.serializer import CustomsProductSerializer
 from goldpoisk.ajax.views import GET_int
 from goldpoisk.product.models import Item, Type, Product, get_filters
 from goldpoisk.product.models import ProductSerializer
+from goldpoisk.product.models import generate_title, generate_description
 from goldpoisk.templates import get_menu, get_with_active_menu, get_env
 
 logger = logging.getLogger('goldpoisk')
@@ -172,6 +173,8 @@ def product(req, slug):
         return HttpResponse(product, 'application/json')
 
     context = {
+        'title': generate_title(product),
+        'description': generate_description(product),
         'menu': JSArray(get_menu()),
         'item': product.json(),
     }
