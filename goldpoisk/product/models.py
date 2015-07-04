@@ -137,6 +137,7 @@ class Item(models.Model):
     product = models.ForeignKey('Product', verbose_name=_('Type'))
     shop = models.ForeignKey(Shop, verbose_name=_('Shop'));
     buy_url = models.URLField(max_length=256, verbose_name=_('Buy url'))
+    updated = models.DateTimeField(auto_now=True, editable=False)
 
     class Meta:
         verbose_name = _('Store product')

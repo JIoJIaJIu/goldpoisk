@@ -8,6 +8,7 @@ class Shop(models.Model):
     url = models.URLField(_('Url'), blank=True, max_length=256)
 
     admin = models.ForeignKey('Admin', verbose_name=_('Admin'))
+    updated = models.DateTimeField(auto_now=True, editable=False)
 
     class Meta:
         verbose_name = _('Shop')
