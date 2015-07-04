@@ -29,6 +29,7 @@ copy_backend_static() {
 }
 
 copy_migrations() {
+    cd ~/goldpoisk
     echo 'Migrations..'
     echo 'Copy migration goldpoisk'
     cp -r arhives/myproject.${BUILD_NUMBER}/goldpoisk/migrations myproject/goldpoisk/
@@ -42,6 +43,7 @@ copy_migrations() {
 }
 
 unzip_backend() {
+    cd ~/goldpoisk
     mkdir -p arhives;
     mv myproject arhives/myproject.${BUILD_NUMBER}
 
