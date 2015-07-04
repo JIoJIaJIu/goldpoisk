@@ -65,8 +65,8 @@ copy_frontend_static() {
     cd ~/goldpoisk
     echo 'Unzipping static..'
     unzip -o frontend.static.zip -d static
-    cp frontend/index/index.bemhtml.js static/js/
-    cp frontend/index/index.priv.js static/js/
+    cp myproject/frontend/index/index.bemhtml.js static/js/
+    cp myproject/frontend/index/index.priv.js static/js/
 
     if [ $? -ne 0 ]; then
         exit 1
