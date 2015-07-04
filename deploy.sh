@@ -83,7 +83,7 @@ usage() {
 
 for i in $@; do
     case $i in
-       --backend) 
+       --backend)
            unzip_backend
            copy_backend_static
            copy_migrations
@@ -99,4 +99,4 @@ for i in $@; do
     esac
 done;
 
-bash deploy.sh --backend
+usage
