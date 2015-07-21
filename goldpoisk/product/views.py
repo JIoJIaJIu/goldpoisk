@@ -168,13 +168,30 @@ def product(req, slug):
     if not len(items):
         raise Http404
 
+    #TODO: merge
     if (req.is_ajax()):
-        product = ProductSerializer().serialize(product)
-        return HttpResponse(product, 'application/json')
+        context = {
+            'title': generate_title(product),
+            'description': generate_description(product),
+
+            #breadcrumbs
+            'name': product.name,
+            'category': product.type.name,
+            'categoryUrl': "/%s" % product.type.url,
+
+            'item': json.loads(product.json())
+        }
+        return HttpResponse(json.dumps(context), 'application/json')
 
     context = {
         'title': generate_title(product),
         'description': generate_description(product),
+
+        #breadcrumbs
+        'name': product.name,
+        'category': product.type.name,
+        'categoryUrl': "/%s" % product.type.url,
+
         'menu': JSArray(get_menu()),
         'item': product.json(),
     }
