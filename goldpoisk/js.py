@@ -42,9 +42,11 @@ def render (data, entry_point, bemjson=False, env=None):
             c.locals.context = data;
             c.locals.env = env;
             if bemjson:
-                return c.eval('JSON.stringify(%s(context, env))' % entry_point)
+                resp = c.eval('JSON.stringify(%s(context, env))' % entry_point)
+            else:
+                resp = c.eval('BEMHTML.apply(%s(context, env))' % entry_point)
 
-            return c.eval('BEMHTML.apply(%s(context, env))' % entry_point)
+    return resp
 
 def eval (str):
     with JSLocker():
