@@ -19,10 +19,11 @@ restart_server() {
 }
 
 copy_backend_static() {
-    cd ~/goldpoisk
+    cd ~/goldpoisk/myproject
     echo 'Generate sitemap.xml'
-    python myproject/utils/sitemap.py
+    python utils/sitemap.py
     mv -v sitemap.xml static/
+    mv -v robots.txt static/
 
     echo 'Collect static'
     python manage.py collectstatic --noinput
